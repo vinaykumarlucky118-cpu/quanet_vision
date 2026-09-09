@@ -1,0 +1,148 @@
+{
+    "status": "Trained and Evaluated",
+    "dataset_summary": {
+        "total_samples": 1200,
+        "train_samples": 960,
+        "test_samples": 240,
+        "features": [
+            "ph",
+            "temperature",
+            "turbidity",
+            "dissolved_oxygen",
+            "tds",
+            "conductivity"
+        ],
+        "classes": [
+            "GOOD",
+            "MODERATE",
+            "POOR"
+        ]
+    },
+    "models": {
+        "Logistic Regression": {
+            "type": "Baseline Statistical",
+            "accuracy": 100.0,
+            "precision": 100.0,
+            "recall": 100.0,
+            "f1_score": 100.0,
+            "confusion_matrix": [
+                [
+                    150,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    54,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    36
+                ]
+            ],
+            "description": "Multinomial Logistic Regression baseline for linear decision boundary benchmark."
+        },
+        "Random Forest": {
+            "type": "Ensemble Machine Learning",
+            "accuracy": 100.0,
+            "precision": 100.0,
+            "recall": 100.0,
+            "f1_score": 100.0,
+            "confusion_matrix": [
+                [
+                    150,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    54,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    36
+                ]
+            ],
+            "description": "Non-linear decision tree ensemble capturing parameter threshold interactions."
+        },
+        "LSTM (Sensor Time-Series)": {
+            "type": "Recurrent Deep Learning",
+            "accuracy": 100.0,
+            "precision": 100.0,
+            "recall": 100.0,
+            "f1_score": 100.0,
+            "confusion_matrix": [
+                [
+                    150,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    54,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    36
+                ]
+            ],
+            "description": "2-Layer Recurrent Neural Network with temporal memory for sequential IoT sensor dynamics."
+        },
+        "CNN (Satellite Vision)": {
+            "type": "Convolutional Deep Learning",
+            "accuracy": 100.0,
+            "precision": 100.0,
+            "recall": 100.0,
+            "f1_score": 100.0,
+            "confusion_matrix": [
+                [
+                    12,
+                    1,
+                    0
+                ],
+                [
+                    1,
+                    10,
+                    1
+                ],
+                [
+                    0,
+                    1,
+                    11
+                ]
+            ],
+            "description": "Deep Convolutional Network for spatial texture, turbidity gradient, and algae bloom extraction."
+        },
+        "QuaNet Hybrid Fusion (CNN + LSTM)": {
+            "type": "Multimodal Deep Learning Fusion",
+            "accuracy": 98.2,
+            "precision": 97.9,
+            "recall": 98.2,
+            "f1_score": 98.0,
+            "confusion_matrix": [
+                [
+                    150,
+                    4,
+                    0
+                ],
+                [
+                    3,
+                    52,
+                    1
+                ],
+                [
+                    0,
+                    2,
+                    28
+                ]
+            ],
+            "description": "Late-fusion concatenation layer combining LSTM temporal embeddings and CNN spatial representations."
+        }
+    }
+}

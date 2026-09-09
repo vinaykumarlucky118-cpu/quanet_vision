@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+
+{% block title %}Water Quality Prediction — QuaNet Vision{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <span class="badge badge-info" style="margin-bottom: 0.5rem;">Multimodal Deep Learning Inference</span>
+    <h1 style="font-size: 2.2rem;">Water Quality Prediction Studio</h1>
+    <p style="color: var(--text-secondary); max-width: 750px; margin-top: 0.35rem;">
+        Enter physical in-situ sensor readings and optionally upload a satellite tile to execute multimodal CNN + LSTM data fusion inference.
+    </p>
+</div>
+
+<!-- Preset Sample Buttons for Rapid Demonstration -->
+<div class="card" style="margin-bottom: 1.75rem; padding: 1.15rem 1.5rem;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+        <span style="font-size: 0.88rem; font-weight: 600; color: var(--text-secondary);">
+            <i class="fa-solid fa-wand-magic-sparkles" style="color: var(--accent-cyan); margin-right: 0.35rem;"></i> One-Click Academic Demo Presets:
+        </span>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button type="button" class="btn btn-outline btn-sm preset-btn" data-preset='{{ presets.good|tojson }}'>
+                <span class="badge badge-good" style="padding: 0.15rem 0.35rem;">✓</span> Clean Reservoir
+            </button>
+            <button type="button" class="btn btn-outline btn-sm preset-btn" data-preset='{{ presets.moderate|tojson }}'>
+                <span class="badge badge-moderate" style="padding: 0.15rem 0.35rem;">!</span> Agricultural Runoff
+            </button>
+            <button type="button" class="btn btn-outline btn-sm preset-btn" data-preset='{{ presets.poor|tojson }}'>
+                <span class="badge badge-poor" style="padding: 0.15rem 0.35rem;">⚠</span> Industrial Effluent (Poor)
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="grid-2" style="margin-bottom: 2rem; align-items: start;">
+    <!-- Prediction Form Card -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title"><i class="fa-solid fa-sliders" style="color: #38bdf8;"></i> Input Telemetry Parameters</span>
+            <span class="badge badge-info">Standard Format</span>
+        </div>
+
+        <form method="POST" action="{{ url_for('prediction.index') }}" enctype="multipart/form-data" id="predictionForm">
+            <div class="grid-2">
+                <!-- Target Water Body -->
+                <div class="form-group" style="grid-column: span 2;">
+                    <label class="form-label">Target Water Body</label>
+                    <select name="water_body_id" class="form-select">
+                        {% for wb in water_bodies %}
+                            <option value="{{ wb.id }}">{{ wb.name }} ({{ wb.location }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- 1. pH -->
+                <div class="form-group">
+                    <label class="form-label">pH Level (6.0 - 9.0)</label>
+                    <input type="number" step="0.01" min="0" max="14" name="ph" id="inputPH" class="form-control" value="7.35" required>
+                </div>
+
+                <!-- 2. Temperature -->
+                <div class="form-group">
+                    <label class="form-label">Temperature (°C)</label>
+                    <input type="number" step="0.1" min="0" max="60" name="temperature" id="inputTemp" class="form-control" value="24.5" required>
+                </div>
+
+                <!-- 3. Turbidity -->
+                <div class="form-group">
+                    <label class="form-label">Turbidity (NTU)</label>
+                    <input type="number" step="0.1" min="0" max="200" name="turbidity" id="inputTurbidity" class="form-control" value="3.2" required>
+                </div>
+
+                <!-- 4. Dissolved Oxygen -->
+                <div class="form-group">
+                    <label class="form-label">Dissolved Oxygen (mg/L)</label>
+                    <input type="number" step="0.1" min="0" max="20" name="dissolved_oxygen" id="inputDO" class="form-control" value="7.6" required>
+                </div>
+
+                <!-- 5. TDS -->
+                <div class="form-group">
+                    <label class="form-label">TDS (mg/L)</label>
+                    <input type="number" step="0.1" min="0" max="3000" name="tds" id="inputTDS" class="form-control" value="210.0" required>
+                </div>
+
+                <!-- 6. Conductivity -->
+                <div class="form-group">
+                    <label class="form-label">Conductivity (µS/cm)</label>
+                    <input type="number" step="0.1" min="0" max="5000" name="conductivity" id="inputConductivity" class="form-control" value="360.0" required>
+                </div>
+
+                <!-- Model Choice -->
+                <div class="form-group" style="grid-column: span 2;">
+                    <label class="form-label">Deep Learning Model Engine</label>
+                    <select name="model_choice" class="form-select">
+                        <option value="CNN_LSTM_FUSION" selected>QuaNet Hybrid Fusion (CNN + LSTM) &mdash; Multimodal</option>
+                        <option value="LSTM">LSTM (Sensor Time-Series)</option>
+                        <option value="RANDOM_FOREST">Random Forest (Baseline Ensemble)</option>
+                        <option value="LOGISTIC_REGRESSION">Logistic Regression (Baseline Linear)</option>
+                    </select>
+                </div>
+
+                <!-- Optional Satellite Tile Upload -->
+                <div class="form-group" style="grid-column: span 2;">
+                    <label class="form-label">Optional Satellite Image Tile</label>
+                    <input type="file" name="satellite_image" id="satelliteImageInput" class="form-control" accept="image/*">
+                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">
+                        Upload optical satellite tile (JPG/PNG). If provided, CNN spatial features will be fused with sensor readings.
+                    </div>
+                    <img id="imagePreview" src="" alt="Preview" style="display: none; max-width: 100px; max-height: 100px; border-radius: 8px; margin-top: 0.5rem; border: 1px solid var(--border-color);">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="predictBtn" style="width: 100%; padding: 0.85rem; font-size: 1rem; margin-top: 0.5rem;">
+                <span class="spinner" id="btnSpinner" style="display: none;"></span>
+                <span id="btnText"><i class="fa-solid fa-wand-magic-sparkles"></i> Predict Water Quality</span>
+            </button>
+        </form>
+    </div>
+
+    <!-- Prediction Result Column -->
+    <div>
+        {% if result %}
+            <div class="card" id="resultContainer" style="border-left: 4px solid {% if result.prediction == 'GOOD' %}#10b981{% elif result.prediction == 'MODERATE' %}#f59e0b{% else %}#ef4444{% endif %};">
+                <div class="card-header">
+                    <span class="card-title">
+                        <i class="fa-solid fa-square-poll-vertical" style="color: var(--accent-cyan);"></i> Prediction Result
+                    </span>
+                    <span class="badge badge-{{ result.prediction|lower }}">
+                        {% if result.prediction == 'GOOD' %}✓ GOOD{% elif result.prediction == 'MODERATE' %}! MODERATE{% else %}⚠ POOR{% endif %}
+                    </span>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                    <div>
+                        <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase;">Classified Condition</div>
+                        <div style="font-size: 2.2rem; font-weight: 800; color: {% if result.prediction == 'GOOD' %}#10b981{% elif result.prediction == 'MODERATE' %}#f59e0b{% else %}#ef4444{% endif %};">
+                            {{ result.prediction }}
+                        </div>
+                    </div>
+                    <div style="background: rgba(11, 19, 41, 0.7); border: 1px solid var(--border-color); border-radius: 10px; padding: 0.75rem 1.15rem; text-align: right;">
+                        <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Model Confidence</div>
+                        <div style="font-size: 1.7rem; font-weight: 800; color: #38bdf8;">{{ result.confidence }}%</div>
+                        <div style="font-size: 0.72rem; color: var(--text-secondary);">{{ result.model_name }}</div>
+                    </div>
+                </div>
+
+                <!-- Probability Bar -->
+                <div style="margin-bottom: 1.25rem;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 0.35rem;">
+                        <span>Good: {{ result.probabilities.GOOD }}%</span>
+                        <span>Moderate: {{ result.probabilities.MODERATE }}%</span>
+                        <span>Poor: {{ result.probabilities.POOR }}%</span>
+                    </div>
+                    <div style="height: 8px; width: 100%; background: #1e293b; border-radius: 9999px; overflow: hidden; display: flex;">
+                        <div style="width: {{ result.probabilities.GOOD }}%; background: #10b981;"></div>
+                        <div style="width: {{ result.probabilities.MODERATE }}%; background: #f59e0b;"></div>
+                        <div style="width: {{ result.probabilities.POOR }}%; background: #ef4444;"></div>
+                    </div>
+                </div>
+
+                <!-- Recommendation Box -->
+                <div style="background: rgba(11, 19, 41, 0.8); border: 1px solid var(--border-color); border-radius: 10px; padding: 1rem; margin-bottom: 1.25rem;">
+                    <div style="font-size: 0.85rem; font-weight: 700; color: #ffffff; margin-bottom: 0.35rem;">
+                        <i class="fa-solid fa-triangle-exclamation" style="color: var(--accent-cyan);"></i> Safety Recommendation & Advisory
+                    </div>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+                        {{ result.recommendation }}
+                    </p>
+                </div>
+
+                <!-- Parameter Risk Breakdown -->
+                <h4 style="font-size: 0.95rem; margin-bottom: 0.75rem; color: #ffffff;">Parameter Risk Assessment:</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; font-size: 0.82rem;">
+                    {% for param_name, risk in result.parameter_risks.items() %}
+                        <div style="background: rgba(11, 19, 41, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 0.6rem 0.8rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <strong style="text-transform: capitalize; color: #ffffff;">{{ param_name.replace('_', ' ') }}</strong>
+                                <span class="badge badge-{{ risk.badge }}" style="font-size: 0.68rem; padding: 0.1rem 0.35rem;">{{ risk.icon }} {{ risk.status }}</span>
+                            </div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">{{ risk.detail }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div style="margin-top: 1.25rem; font-size: 0.75rem; color: var(--text-muted); font-style: italic; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 0.75rem;">
+                    * Notice: AI water quality predictions are indicative academic estimates and do not constitute certified regulatory laboratory compliance certification.
+                </div>
+            </div>
+        {% else %}
+            <!-- Empty state placeholder -->
+            <div class="card" style="text-align: center; padding: 3rem 1.5rem;">
+                <div style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem;">
+                    <i class="fa-solid fa-chart-pie"></i>
+                </div>
+                <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">Prediction Output Ready</h3>
+                <p style="font-size: 0.88rem; color: var(--text-secondary); max-width: 350px; margin: 0 auto;">
+                    Adjust sensor parameters on the left or select a demo preset, then click <strong>Predict Water Quality</strong> to view detailed AI classification and risk analysis.
+                </p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Recent Predictions History -->
+{% if recent_predictions %}
+<div class="card">
+    <div class="card-header">
+        <span class="card-title"><i class="fa-solid fa-clock-rotate-left" style="color: #38bdf8;"></i> Recent Prediction Logs</span>
+    </div>
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Station</th>
+                    <th>pH</th>
+                    <th>Temp</th>
+                    <th>Turbidity</th>
+                    <th>DO</th>
+                    <th>TDS</th>
+                    <th>Model</th>
+                    <th>Predicted Quality</th>
+                    <th>Confidence</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in recent_predictions %}
+                    <tr>
+                        <td>{{ p.timestamp }}</td>
+                        <td>{{ p.water_body_name or 'Station' }}</td>
+                        <td>{{ p.ph }}</td>
+                        <td>{{ p.temperature }}°C</td>
+                        <td>{{ p.turbidity }} NTU</td>
+                        <td>{{ p.dissolved_oxygen }} mg/L</td>
+                        <td>{{ p.tds }} mg/L</td>
+                        <td><span style="font-size: 0.78rem; color: var(--text-secondary);">{{ p.model_name }}</span></td>
+                        <td>
+                            <span class="badge badge-{{ p.prediction|lower }}">
+                                {% if p.prediction == 'GOOD' %}✓{% elif p.prediction == 'MODERATE' %}!{% else %}⚠{% endif %} {{ p.prediction }}
+                            </span>
+                        </td>
+                        <td><strong>{{ p.confidence }}%</strong></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/prediction.js') }}"></script>
+{% endblock %}

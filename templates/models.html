@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}AI Model Architecture & Benchmarks — QuaNet Vision{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <span class="badge badge-info" style="margin-bottom: 0.5rem;">Deep Learning System Architecture</span>
+    <h1 style="font-size: 2.2rem;">AI Architecture & Dynamic Model Benchmarks</h1>
+    <p style="color: var(--text-secondary); max-width: 800px; margin-top: 0.35rem;">
+        Detailed mathematical and architectural documentation of Convolutional Neural Networks (CNN), Long Short-Term Memory (LSTM), Multimodal Data Fusion, and authentic empirical benchmark evaluations.
+    </p>
+</div>
+
+<!-- Architecture Modules Cards -->
+<div class="grid-3" style="margin-bottom: 2.5rem;">
+    <!-- 1. CNN Model -->
+    <div class="card" style="border-top: 3px solid #0ea5e9;">
+        <div style="font-size: 1.5rem; color: #38bdf8; margin-bottom: 0.5rem;"><i class="fa-solid fa-satellite"></i></div>
+        <h3 style="font-size: 1.15rem; margin-bottom: 0.4rem;">1. CNN Satellite Model</h3>
+        <span class="badge badge-info" style="font-size: 0.7rem; margin-bottom: 0.75rem;">Spatial Feature Extractor</span>
+        <p style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 0.75rem;">
+            Extracts spectral reflectance patterns, algal blooms, and suspended particulate turbidity from satellite imagery tiles ($128\times 128\times 3$).
+        </p>
+        <div style="font-size: 0.75rem; color: var(--text-muted); background: rgba(11, 19, 41, 0.7); padding: 0.6rem; border-radius: 6px;">
+            <strong>Layers:</strong> Conv2D(16) &rarr; BatchNorm &rarr; MaxPool &rarr; Conv2D(32) &rarr; Conv2D(64) &rarr; Dense Embedding (32D)
+        </div>
+    </div>
+
+    <!-- 2. LSTM Model -->
+    <div class="card" style="border-top: 3px solid #8b5cf6;">
+        <div style="font-size: 1.5rem; color: #a78bfa; margin-bottom: 0.5rem;"><i class="fa-solid fa-clock-rotate-left"></i></div>
+        <h3 style="font-size: 1.15rem; margin-bottom: 0.4rem;">2. LSTM Time-Series Model</h3>
+        <span class="badge badge-good" style="background: rgba(139, 92, 246, 0.15); color: #a78bfa; border-color: rgba(139, 92, 246, 0.4); font-size: 0.7rem; margin-bottom: 0.75rem;">Temporal Dynamics</span>
+        <p style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 0.75rem;">
+            Analyzes multi-parameter continuous sequence sliding windows to capture rate of change and diurnal temperature/DO cycles.
+        </p>
+        <div style="font-size: 0.75rem; color: var(--text-muted); background: rgba(11, 19, 41, 0.7); padding: 0.6rem; border-radius: 6px;">
+            <strong>Layers:</strong> Input(Seq x 6) &rarr; LSTM(64, 2 layers) &rarr; Dropout(0.2) &rarr; Dense(32) &rarr; Softmax(3)
+        </div>
+    </div>
+
+    <!-- 3. Fusion -->
+    <div class="card" style="border-top: 3px solid #10b981;">
+        <div style="font-size: 1.5rem; color: #34d399; margin-bottom: 0.5rem;"><i class="fa-solid fa-code-merge"></i></div>
+        <h3 style="font-size: 1.15rem; margin-bottom: 0.4rem;">3. Multimodal Data Fusion</h3>
+        <span class="badge badge-good" style="font-size: 0.7rem; margin-bottom: 0.75rem;">Late Multimodal Layer</span>
+        <p style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 0.75rem;">
+            Merges spatial computer vision embeddings with temporal sensor representation vectors to compute robust joint classifications.
+        </p>
+        <div style="font-size: 0.75rem; color: var(--text-muted); background: rgba(11, 19, 41, 0.7); padding: 0.6rem; border-radius: 6px;">
+            <strong>Equation:</strong> $P_{\text{fused}} = \alpha \cdot P_{\text{LSTM}} + (1-\alpha) \cdot P_{\text{CNN}}$ ($\alpha = 0.60$)
+        </div>
+    </div>
+</div>
+
+<!-- Dynamic Model Evaluation Table -->
+<div class="card" style="margin-bottom: 2.5rem;">
+    <div class="card-header">
+        <span class="card-title">
+            <i class="fa-solid fa-table" style="color: #38bdf8;"></i> Authentic Model Performance Benchmark
+        </span>
+        <span class="badge badge-good">Evaluated on Test Split (N = {{ eval_data.dataset_summary.test_samples if eval_data else 'Holdout' }})</span>
+    </div>
+
+    {% if eval_data and eval_data.models %}
+        <div class="table-responsive" style="margin-bottom: 1rem;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Model Architecture</th>
+                        <th>Category</th>
+                        <th style="text-align: right;">Accuracy (%)</th>
+                        <th style="text-align: right;">Precision (%)</th>
+                        <th style="text-align: right;">Recall (%)</th>
+                        <th style="text-align: right;">F1-Score (%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for m_name, m in eval_data.models.items() %}
+                        <tr {% if 'Fusion' in m_name %}style="background: rgba(14, 165, 233, 0.12); font-weight: 700;"{% endif %}>
+                            <td style="color: {% if 'Fusion' in m_name %}#38bdf8{% else %}#ffffff{% endif %}; font-weight: 700;">
+                                {% if 'Fusion' in m_name %}<i class="fa-solid fa-crown" style="color: #fbbf24; margin-right: 0.35rem;"></i>{% endif %}
+                                {{ m_name }}
+                            </td>
+                            <td><span style="font-size: 0.8rem; color: var(--text-secondary);">{{ m.type }}</span></td>
+                            <td style="text-align: right; font-weight: 800; color: #ffffff;">{{ m.accuracy }}%</td>
+                            <td style="text-align: right;">{{ m.precision }}%</td>
+                            <td style="text-align: right;">{{ m.recall }}%</td>
+                            <td style="text-align: right; color: #38bdf8; font-weight: 700;">{{ m.f1_score }}%</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div style="font-size: 0.78rem; color: var(--text-muted);">
+            * Note: All metrics are computed dynamically from actual scikit-learn & PyTorch evaluation scripts executed against the holdout test partition.
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+            <em>Model evaluation will appear after training. Run <code>python -m training.evaluate</code>.</em>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Confusion Matrix Visualizations -->
+<div class="card">
+    <div class="card-header">
+        <span class="card-title"><i class="fa-solid fa-border-all" style="color: #34d399;"></i> Confusion Matrices (Test Evaluation)</span>
+        <span class="badge badge-info">True vs. Predicted Class</span>
+    </div>
+
+    {% if eval_data and eval_data.models %}
+        <div class="grid-2">
+            {% for m_name, m in eval_data.models.items() %}
+                {% if m.confusion_matrix %}
+                    <div style="background: rgba(11, 19, 41, 0.7); border: 1px solid var(--border-color); border-radius: 10px; padding: 1.25rem;">
+                        <h4 style="font-size: 0.95rem; margin-bottom: 0.75rem; color: #ffffff;">{{ m_name }}</h4>
+                        <div class="table-responsive">
+                            <table class="data-table" style="text-align: center; font-size: 0.82rem;">
+                                <thead>
+                                    <tr>
+                                        <th>True \ Pred</th>
+                                        <th>Pred: GOOD</th>
+                                        <th>Pred: MODERATE</th>
+                                        <th>Pred: POOR</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in m.confusion_matrix %}
+                                        {% set row_idx = loop.index0 %}
+                                        <tr>
+                                            <td style="text-align: left; font-weight: 700; color: var(--text-secondary);">
+                                                {% if row_idx == 0 %}Actual GOOD{% elif row_idx == 1 %}Actual MOD{% else %}Actual POOR{% endif %}
+                                            </td>
+                                            {% for cell in row %}
+                                                {% set col_idx = loop.index0 %}
+                                                <td style="
+                                                    {% if row_idx == col_idx %}background: rgba(16, 185, 129, 0.35); color: #ffffff; font-weight: 800;
+                                                    {% elif cell > 0 %}background: rgba(239, 68, 68, 0.25); color: #f87171;
+                                                    {% else %}background: rgba(255, 255, 255, 0.02); color: var(--text-muted);{% endif %}
+                                                ">
+                                                    {{ cell }}
+                                                </td>
+                                            {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

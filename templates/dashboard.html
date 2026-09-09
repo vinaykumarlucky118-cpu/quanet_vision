@@ -1,0 +1,284 @@
+{% extends "base.html" %}
+
+{% block title %}Monitoring Dashboard — QuaNet Vision{% endblock %}
+
+{% block content %}
+<!-- Dashboard Header -->
+<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+    <div>
+        <div style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.35rem;">
+            <h1 style="font-size: 1.9rem; font-weight: 800;">Water Quality Monitoring Dashboard</h1>
+            <span class="demo-pill"><i class="fa-solid fa-flask"></i> DEMO DATA</span>
+        </div>
+        <p style="color: var(--text-secondary); font-size: 0.88rem;">
+            Continuous environmental telemetry &bull; Last updated: <span style="color: #ffffff; font-weight: 600;">{{ latest.timestamp }}</span>
+        </p>
+    </div>
+
+    <!-- Station Selector Dropdown & Live Actions -->
+    <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+        <form method="GET" action="{{ url_for('dashboard.index') }}" id="stationForm" style="display: flex; gap: 0.5rem;">
+            <select name="water_body_id" class="form-select" style="min-width: 230px;" onchange="document.getElementById('stationForm').submit()">
+                {% for wb in water_bodies %}
+                    <option value="{{ wb.id }}" {% if selected_wb and selected_wb.id == wb.id %}selected{% endif %}>
+                        {{ wb.name }} ({{ wb.basin_type }})
+                    </option>
+                {% endfor %}
+            </select>
+        </form>
+
+        <!-- Live Telemetry Simulator Form -->
+        <form method="POST" action="{{ url_for('sensor_data.simulate_packet') }}" style="display: flex; gap: 0.35rem;">
+            <input type="hidden" name="water_body_id" value="{{ selected_wb.id if selected_wb else 1 }}">
+            <button type="submit" name="quality_mode" value="RANDOM" class="btn btn-outline btn-sm" title="Simulate Real-time Sensor Packet">
+                <i class="fa-solid fa-bolt" style="color: var(--accent-cyan);"></i> Ingest Simulated Packet
+            </button>
+        </form>
+
+        <a href="{{ url_for('dashboard.index', water_body_id=selected_wb.id if selected_wb else 1) }}" class="btn btn-outline btn-sm" title="Refresh Live Stream">
+            <i class="fa-solid fa-rotate"></i>
+        </a>
+    </div>
+</div>
+
+<!-- Central Status Card & Station Overview -->
+<div class="grid-3" style="margin-bottom: 1.5rem;">
+    <!-- Large Central Water Quality Status Card -->
+    <div class="card" style="grid-column: span 2; border-left: 4px solid {{ quality_info.color }};">
+        <div class="card-header">
+            <span class="card-title">
+                <i class="fa-solid fa-shield-heart" style="color: {{ quality_info.color }};"></i> Current Water Quality Assessment
+            </span>
+            <span class="badge badge-{{ latest.water_quality|lower }}">
+                {{ quality_info.icon }} {{ latest.water_quality }}
+            </span>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem;">
+            <div>
+                <div style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 600;">Evaluated Status</div>
+                <div style="font-size: 2.3rem; font-weight: 800; color: {{ quality_info.color }}; letter-spacing: -0.5px;">
+                    {{ latest.water_quality }}
+                </div>
+                <div style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                    Risk Assessment: <strong style="color: #ffffff;">{{ quality_info.risk_level }}</strong>
+                </div>
+            </div>
+
+            <div style="background: rgba(11, 19, 41, 0.7); border: 1px solid var(--border-color); border-radius: 10px; padding: 0.85rem 1.25rem; text-align: right;">
+                <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Prediction Confidence</div>
+                <div style="font-size: 1.75rem; font-weight: 800; color: #38bdf8;">{{ confidence }}%</div>
+                <div style="font-size: 0.75rem; color: var(--text-secondary);">Model: QuaNet Fusion (CNN+LSTM)</div>
+            </div>
+        </div>
+
+        <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid rgba(255, 255, 255, 0.08); font-size: 0.85rem; color: var(--text-secondary);">
+            <i class="fa-solid fa-circle-info" style="color: var(--accent-cyan); margin-right: 0.35rem;"></i>
+            <strong>Recommendation:</strong> {{ quality_info.recommendation }}
+        </div>
+    </div>
+
+    <!-- Station Metadata Card -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title" style="font-size: 1.05rem;">
+                <i class="fa-solid fa-location-dot" style="color: #38bdf8;"></i> Station Profile
+            </span>
+        </div>
+        <div style="font-size: 0.85rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 0.6rem;">
+            <div>
+                <strong style="color: #ffffff;">Station:</strong> {{ selected_wb.name if selected_wb else 'Primary Reservoir' }}
+            </div>
+            <div>
+                <strong style="color: #ffffff;">Location:</strong> {{ selected_wb.location if selected_wb else 'Watershed Zone' }}
+            </div>
+            <div>
+                <strong style="color: #ffffff;">Basin Type:</strong> {{ selected_wb.basin_type if selected_wb else 'Freshwater' }}
+            </div>
+            <div style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; margin-top: 0.25rem;">
+                {{ selected_wb.description if selected_wb else 'Continuous environmental monitoring node.' }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 6 Sensor Parameter Cards -->
+<div class="grid-6" style="margin-bottom: 1.5rem;">
+    <!-- 1. pH -->
+    <div class="sensor-card">
+        <div class="sensor-header">
+            <span class="sensor-label">pH Level</span>
+            <span class="badge {% if 6.5 <= latest.ph <= 8.5 %}badge-good{% elif 6.0 <= latest.ph <= 9.0 %}badge-moderate{% else %}badge-poor{% endif %}" style="font-size: 0.7rem; padding: 0.15rem 0.45rem;">
+                {% if 6.5 <= latest.ph <= 8.5 %}✓ Safe{% else %}! Deviated{% endif %}
+            </span>
+        </div>
+        <div class="sensor-value-box">
+            <span class="sensor-value">{{ latest.ph }}</span>
+        </div>
+        <div class="sensor-meta">Benchmark: 6.5 - 8.5</div>
+    </div>
+
+    <!-- 2. Temperature -->
+    <div class="sensor-card">
+        <div class="sensor-header">
+            <span class="sensor-label">Temperature</span>
+            <span class="badge badge-good" style="font-size: 0.7rem; padding: 0.15rem 0.45rem;">✓ Normal</span>
+        </div>
+        <div class="sensor-value-box">
+            <span class="sensor-value">{{ latest.temperature }}</span>
+            <span class="sensor-unit">°C</span>
+        </div>
+        <div class="sensor-meta">Benchmark: 15 - 28 °C</div>
+    </div>
+
+    <!-- 3. Turbidity -->
+    <div class="sensor-card">
+        <div class="sensor-header">
+            <span class="sensor-label">Turbidity</span>
+            <span class="badge {% if latest.turbidity <= 5.0 %}badge-good{% elif latest.turbidity <= 15.0 %}badge-moderate{% else %}badge-poor{% endif %}" style="font-size: 0.7rem; padding: 0.15rem 0.45rem;">
+                {% if latest.turbidity <= 5.0 %}✓ Clear{% elif latest.turbidity <= 15.0 %}! Moderate{% else %}⚠ Turbid{% endif %}
+            </span>
+        </div>
+        <div class="sensor-value-box">
+            <span class="sensor-value">{{ latest.turbidity }}</span>
+            <span class="sensor-unit">NTU</span>
+        </div>
+        <div class="sensor-meta">Benchmark: &lt; 5.0 NTU</div>
+    </div>
+
+    <!-- 4. Dissolved Oxygen -->
+    <div class="sensor-card">
+        <div class="sensor-header">
+            <span class="sensor-label">Dissolved Oxygen</span>
+            <span class="badge {% if latest.dissolved_oxygen >= 6.5 %}badge-good{% elif latest.dissolved_oxygen >= 4.0 %}badge-moderate{% else %}badge-poor{% endif %}" style="font-size: 0.7rem; padding: 0.15rem 0.45rem;">
+                {% if latest.dissolved_oxygen >= 6.5 %}✓ Healthy{% elif latest.dissolved_oxygen >= 4.0 %}! Low{% else %}⚠ Hypoxic{% endif %}
+            </span>
+        </div>
+        <div class="sensor-value-box">
+            <span class="sensor-value">{{ latest.dissolved_oxygen }}</span>
+            <span class="sensor-unit">mg/L</span>
+        </div>
+        <div class="sensor-meta">Benchmark: &gt; 6.5 mg/L</div>
+    </div>
+
+    <!-- 5. TDS -->
+    <div class="sensor-card">
+        <div class="sensor-header">
+            <span class="sensor-label">Total Dissolved Solids</span>
+            <span class="badge {% if latest.tds <= 300.0 %}badge-good{% elif latest.tds <= 600.0 %}badge-moderate{% else %}badge-poor{% endif %}" style="font-size: 0.7rem; padding: 0.15rem 0.45rem;">
+                {% if latest.tds <= 300.0 %}✓ Normal{% else %}! Elevated{% endif %}
+            </span>
+        </div>
+        <div class="sensor-value-box">
+            <span class="sensor-value">{{ latest.tds }}</span>
+            <span class="sensor-unit">mg/L</span>
+        </div>
+        <div class="sensor-meta">Benchmark: &lt; 300 mg/L</div>
+    </div>
+
+    <!-- 6. Conductivity -->
+    <div class="sensor-card">
+        <div class="sensor-header">
+            <span class="sensor-label">Conductivity</span>
+            <span class="badge {% if latest.conductivity <= 500.0 %}badge-good{% else %}badge-moderate{% endif %}" style="font-size: 0.7rem; padding: 0.15rem 0.45rem;">
+                ✓ Ionic
+            </span>
+        </div>
+        <div class="sensor-value-box">
+            <span class="sensor-value">{{ latest.conductivity }}</span>
+            <span class="sensor-unit">µS/cm</span>
+        </div>
+        <div class="sensor-meta">Benchmark: &lt; 500 µS/cm</div>
+    </div>
+</div>
+
+<!-- 5 Chart.js Time-Series Charts Grid -->
+<div class="grid-2" style="margin-bottom: 1.5rem;">
+    <!-- Chart 1: pH Over Time -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title"><i class="fa-solid fa-chart-line" style="color: #38bdf8;"></i> pH Over Time</span>
+            <span class="sensor-meta">Neutral Range: 6.5 - 8.5</span>
+        </div>
+        <div style="height: 220px;">
+            <canvas id="chartPH"></canvas>
+        </div>
+    </div>
+
+    <!-- Chart 2: Temperature Over Time -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title"><i class="fa-solid fa-temperature-half" style="color: #f59e0b;"></i> Temperature (°C) Over Time</span>
+            <span class="sensor-meta">Ambient Aquatic Thermal Profile</span>
+        </div>
+        <div style="height: 220px;">
+            <canvas id="chartTemp"></canvas>
+        </div>
+    </div>
+
+    <!-- Chart 3: Turbidity Over Time -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title"><i class="fa-solid fa-water" style="color: #ef4444;"></i> Turbidity (NTU) Over Time</span>
+            <span class="sensor-meta">Threshold &lt; 5.0 NTU</span>
+        </div>
+        <div style="height: 220px;">
+            <canvas id="chartTurbidity"></canvas>
+        </div>
+    </div>
+
+    <!-- Chart 4: Dissolved Oxygen Over Time -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title"><i class="fa-solid fa-lungs" style="color: #10b981;"></i> Dissolved Oxygen (mg/L) Over Time</span>
+            <span class="sensor-meta">Critical Limit &gt; 4.0 mg/L</span>
+        </div>
+        <div style="height: 220px;">
+            <canvas id="chartDO"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Chart 5: TDS & Conductivity Over Time Full Width -->
+<div class="card" style="margin-bottom: 1.5rem;">
+    <div class="card-header">
+        <span class="card-title"><i class="fa-solid fa-bolt" style="color: #818cf8;"></i> Total Dissolved Solids & Electrical Conductivity Multi-Axis Trend</span>
+        <span class="sensor-meta">Dual Y-Axis Time Series</span>
+    </div>
+    <div style="height: 250px;">
+        <canvas id="chartTDS"></canvas>
+    </div>
+</div>
+
+<!-- Recent Active Alerts Strip -->
+{% if alerts %}
+<div class="card" style="border-left: 4px solid #ef4444;">
+    <div class="card-header">
+        <span class="card-title" style="color: #f87171;">
+            <i class="fa-solid fa-triangle-exclamation"></i> Active Environmental Anomaly Alerts
+        </span>
+        <a href="{{ url_for('alerts.index') }}" class="btn btn-outline btn-sm">View All Alerts</a>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 0.65rem;">
+        {% for a in alerts %}
+            <div style="background: rgba(11, 19, 41, 0.7); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 8px; padding: 0.75rem 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                <div>
+                    <span class="badge badge-danger" style="font-size: 0.72rem; padding: 0.15rem 0.45rem;">{{ a.severity }}</span>
+                    <strong style="margin-left: 0.5rem; font-size: 0.88rem; color: #ffffff;">{{ a.parameter }}</strong>: 
+                    <span style="font-size: 0.82rem; color: var(--text-secondary);">{{ a.message }}</span>
+                </div>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">{{ a.timestamp }}</span>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const chartConfigData = {{ chart_data|tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block title %}Sensor Telemetry Data — QuaNet Vision{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
+    <div>
+        <span class="badge badge-info" style="margin-bottom: 0.5rem;">In-Situ Telemetry Repository</span>
+        <h1 style="font-size: 2.2rem;">Sensor Telemetry Records</h1>
+        <p style="color: var(--text-secondary); max-width: 700px; margin-top: 0.35rem;">
+            Search, filter, inspect, and export multi-parameter historical telemetry datasets across all watershed monitoring stations.
+        </p>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+        <a href="{{ url_for('sensor_data.sample_template') }}" class="btn btn-outline" style="font-size: 0.88rem;" title="Download CSV Template for Uploads">
+            <i class="fa-solid fa-file-arrow-down"></i> Sample CSV Template
+        </a>
+        <a href="{{ url_for('sensor_data.export_csv') }}" class="btn btn-outline" style="font-size: 0.88rem;">
+            <i class="fa-solid fa-file-csv"></i> Export CSV
+        </a>
+        <button type="button" class="btn btn-primary" onclick="document.getElementById('uploadModal').style.display='block'" style="font-size: 0.88rem;">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Upload CSV Dataset
+        </button>
+    </div>
+</div>
+
+<!-- Upload CSV Modal Dialog -->
+<div id="uploadModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 2000; backdrop-filter: blur(4px);">
+    <div style="max-width: 540px; margin: 5rem auto; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 2rem; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+            <h3 style="font-size: 1.2rem; color: #ffffff;"><i class="fa-solid fa-file-arrow-up" style="color: #38bdf8;"></i> Upload Sensor Dataset (CSV)</h3>
+            <button type="button" onclick="document.getElementById('uploadModal').style.display='none'" style="background: none; border: none; color: #94a3b8; font-size: 1.5rem; cursor: pointer;">&times;</button>
+        </div>
+
+        <form method="POST" action="{{ url_for('sensor_data.upload_csv') }}" enctype="multipart/form-data">
+            <div class="form-group">
+                <label class="form-label">Target Monitoring Station</label>
+                <select name="water_body_id" class="form-select">
+                    {% for wb in water_bodies %}
+                        <option value="{{ wb.id }}">{{ wb.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Select .csv File</label>
+                <input type="file" name="csv_file" class="form-control" accept=".csv" required>
+            </div>
+
+            <div style="background: rgba(11, 19, 41, 0.8); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.85rem; font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 1.25rem; line-height: 1.5;">
+                <strong style="color: #ffffff;">Expected CSV Columns:</strong><br>
+                <code>ph, temperature, turbidity, dissolved_oxygen, tds, conductivity</code><br>
+                <span style="color: var(--text-muted);">Optional: <code>date, time, water_quality</code></span>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <a href="{{ url_for('sensor_data.sample_template') }}" style="font-size: 0.82rem; color: var(--accent-cyan);">
+                    <i class="fa-solid fa-download"></i> Get Sample Template
+                </a>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button type="button" class="btn btn-outline" onclick="document.getElementById('uploadModal').style.display='none'">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Validate & Import</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Search & Filter Controls -->
+<div class="card" style="margin-bottom: 1.5rem; padding: 1.25rem;">
+    <form method="GET" action="{{ url_for('sensor_data.index') }}" style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end;">
+        <div style="flex: 2; min-width: 200px;">
+            <label class="form-label" style="font-size: 0.8rem;">Search Keywords</label>
+            <input type="text" name="search" class="form-control" placeholder="Search by date, time, or station..." value="{{ search }}">
+        </div>
+
+        <div style="flex: 1; min-width: 150px;">
+            <label class="form-label" style="font-size: 0.8rem;">Water Quality Status</label>
+            <select name="status" class="form-select">
+                <option value="">All Statuses</option>
+                <option value="GOOD" {% if status == 'GOOD' %}selected{% endif %}>GOOD ✓</option>
+                <option value="MODERATE" {% if status == 'MODERATE' %}selected{% endif %}>MODERATE !</option>
+                <option value="POOR" {% if status == 'POOR' %}selected{% endif %}>POOR ⚠</option>
+            </select>
+        </div>
+
+        <div style="flex: 1.5; min-width: 180px;">
+            <label class="form-label" style="font-size: 0.8rem;">Station</label>
+            <select name="water_body_id" class="form-select">
+                <option value="">All Monitoring Stations</option>
+                {% for wb in water_bodies %}
+                    <option value="{{ wb.id }}" {% if selected_wb == wb.id %}selected{% endif %}>{{ wb.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div style="display: flex; gap: 0.5rem;">
+            <button type="submit" class="btn btn-primary" style="padding: 0.65rem 1.1rem;"><i class="fa-solid fa-filter"></i> Apply</button>
+            <a href="{{ url_for('sensor_data.index') }}" class="btn btn-outline" style="padding: 0.65rem 1.1rem;">Reset</a>
+        </div>
+    </form>
+</div>
+
+<!-- Sensor Records Table -->
+<div class="card" style="padding: 0; overflow: hidden; margin-bottom: 1.5rem;">
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Station</th>
+                    <th>pH</th>
+                    <th>Temp (°C)</th>
+                    <th>Turbidity (NTU)</th>
+                    <th>DO (mg/L)</th>
+                    <th>TDS (mg/L)</th>
+                    <th>EC (µS/cm)</th>
+                    <th>Evaluated Status</th>
+                    <th>Data Source</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in records %}
+                    <tr>
+                        <td><strong>{{ r.date }}</strong></td>
+                        <td style="color: var(--text-muted); font-size: 0.82rem;">{{ r.time }}</td>
+                        <td>{{ r.water_body_name or 'Station' }}</td>
+                        <td>{{ r.ph }}</td>
+                        <td>{{ r.temperature }}</td>
+                        <td>{{ r.turbidity }}</td>
+                        <td>{{ r.dissolved_oxygen }}</td>
+                        <td>{{ r.tds }}</td>
+                        <td>{{ r.conductivity }}</td>
+                        <td>
+                            <span class="badge badge-{{ r.water_quality|lower }}">
+                                {% if r.water_quality == 'GOOD' %}✓{% elif r.water_quality == 'MODERATE' %}!{% else %}⚠{% endif %} {{ r.water_quality }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if r.is_demo %}
+                                <span class="demo-pill" style="font-size: 0.68rem; padding: 0.1rem 0.4rem;">Demo Telemetry</span>
+                            {% else %}
+                                <span class="badge badge-good" style="font-size: 0.68rem; padding: 0.1rem 0.4rem;">{{ r.source }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="11" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
+                            No matching sensor records found. Try adjusting your search or filters.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Pagination Controls -->
+{% if total_pages > 1 %}
+<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+    <div style="font-size: 0.85rem; color: var(--text-secondary);">
+        Showing page <strong>{{ page }}</strong> of <strong>{{ total_pages }}</strong> (Total: {{ total_records }} telemetry records)
+    </div>
+
+    <div style="display: flex; gap: 0.35rem;">
+        {% if page > 1 %}
+            <a href="{{ url_for('sensor_data.index', page=page-1, search=search, status=status, water_body_id=selected_wb) }}" class="btn btn-outline btn-sm">
+                <i class="fa-solid fa-chevron-left"></i> Previous
+            </a>
+        {% endif %}
+
+        {% for p in range(max(1, page - 2), min(total_pages + 1, page + 3)) %}
+            <a href="{{ url_for('sensor_data.index', page=p, search=search, status=status, water_body_id=selected_wb) }}" class="btn {% if p == page %}btn-primary{% else %}btn-outline{% endif %} btn-sm">
+                {{ p }}
+            </a>
+        {% endfor %}
+
+        {% if page < total_pages %}
+            <a href="{{ url_for('sensor_data.index', page=page+1, search=search, status=status, water_body_id=selected_wb) }}" class="btn btn-outline btn-sm">
+                Next <i class="fa-solid fa-chevron-right"></i>
+            </a>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

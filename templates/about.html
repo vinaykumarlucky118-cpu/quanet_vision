@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}About Project — QuaNet Vision{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <span class="badge badge-info" style="margin-bottom: 0.5rem;">Academic Research Specification</span>
+    <h1 style="font-size: 2.3rem;">About QuaNet Vision</h1>
+    <p style="color: var(--text-secondary); max-width: 800px; margin-top: 0.4rem;">
+        An intelligent hybrid IoT–satellite deep learning platform for continuous water-quality prediction, spatial remote sensing, and early environmental hazard prevention.
+    </p>
+</div>
+
+<!-- Project Overview Card -->
+<div class="card" style="margin-bottom: 2rem;">
+    <h2 style="font-size: 1.4rem; margin-bottom: 1rem; color: #38bdf8;">
+        <i class="fa-solid fa-circle-info"></i> Project Description
+    </h2>
+    <p style="color: var(--text-secondary); line-height: 1.7; margin-bottom: 1.25rem;">
+        <strong>QuaNet Vision</strong> is a hybrid AI-based water quality monitoring and prediction platform that synergistically integrates:
+    </p>
+    <div class="grid-3" style="margin-bottom: 1rem;">
+        <div style="background: rgba(11, 19, 41, 0.7); border: 1px solid var(--border-color); border-radius: 10px; padding: 1rem;">
+            <div style="color: #38bdf8; font-weight: 700; margin-bottom: 0.35rem;"><i class="fa-solid fa-microchip"></i> IoT Sensor Telemetry</div>
+            <p style="font-size: 0.82rem; color: var(--text-muted);">In-situ multi-parameter chemistry (pH, Temp, Turbidity, DO, TDS, Conductivity).</p>
+        </div>
+        <div style="background: rgba(11, 19, 41, 0.7); border: 1px solid var(--border-color); border-radius: 10px; padding: 1rem;">
+            <div style="color: #34d399; font-weight: 700; margin-bottom: 0.35rem;"><i class="fa-solid fa-satellite"></i> Satellite Remote Sensing</div>
+            <p style="font-size: 0.82rem; color: var(--text-muted);">High-resolution optical satellite tiles for regional algal bloom and sediment detection.</p>
+        </div>
+        <div style="background: rgba(11, 19, 41, 0.7); border: 1px solid var(--border-color); border-radius: 10px; padding: 1rem;">
+            <div style="color: #a78bfa; font-weight: 700; margin-bottom: 0.35rem;"><i class="fa-solid fa-brain"></i> CNN + LSTM Fusion</div>
+            <p style="font-size: 0.82rem; color: var(--text-muted);">Deep multimodal fusion unifying temporal parameter trajectory and spatial textures.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Aim & Objectives -->
+<div class="grid-2" style="margin-bottom: 2rem;">
+    <div class="card">
+        <h3 style="font-size: 1.25rem; margin-bottom: 0.85rem; color: #38bdf8;">
+            <i class="fa-solid fa-bullseye"></i> Main Aim
+        </h3>
+        <blockquote style="background: rgba(14, 165, 233, 0.1); border-left: 4px solid var(--accent-cyan); padding: 1.25rem; border-radius: 0 10px 10px 0; color: #f8fafc; font-size: 0.95rem; line-height: 1.6; font-style: italic;">
+            "To develop an intelligent hybrid IoT–satellite deep learning system that monitors and predicts water quality and helps detect possible pollution at an early stage."
+        </blockquote>
+    </div>
+
+    <div class="card">
+        <h3 style="font-size: 1.25rem; margin-bottom: 0.85rem; color: #34d399;">
+            <i class="fa-solid fa-list-check"></i> Project Objectives
+        </h3>
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.45rem; font-size: 0.85rem; color: var(--text-secondary);">
+            <li><i class="fa-solid fa-check text-success" style="color: #10b981; margin-right: 0.4rem;"></i> Monitor water-quality parameters continuously (pH, DO, Turbidity, etc.).</li>
+            <li><i class="fa-solid fa-check text-success" style="color: #10b981; margin-right: 0.4rem;"></i> Analyze historical sensor time-series data.</li>
+            <li><i class="fa-solid fa-check text-success" style="color: #10b981; margin-right: 0.4rem;"></i> Analyze optical satellite imagery for water surface characteristics.</li>
+            <li><i class="fa-solid fa-check text-success" style="color: #10b981; margin-right: 0.4rem;"></i> Extract spatial image features using Convolutional Neural Networks (CNN).</li>
+            <li><i class="fa-solid fa-check text-success" style="color: #10b981; margin-right: 0.4rem;"></i> Model temporal dynamics using Long Short-Term Memory (LSTM).</li>
+            <li><i class="fa-solid fa-check text-success" style="color: #10b981; margin-right: 0.4rem;"></i> Combine multi-source features via multimodal late data fusion.</li>
+            <li><i class="fa-solid fa-check text-success" style="color: #10b981; margin-right: 0.4rem;"></i> Predict water quality class (GOOD / MODERATE / POOR) with confidence metrics.</li>
+            <li><i class="fa-solid fa-check text-success" style="color: #10b981; margin-right: 0.4rem;"></i> Detect anomalous pollution spikes and trigger proactive alerts.</li>
+            <li><i class="fa-solid fa-check text-success" style="color: #10b981; margin-right: 0.4rem;"></i> Deliver interactive dashboard visualizations and comprehensive report generation.</li>
+        </ul>
+    </div>
+</div>
+
+<!-- Problem Statement -->
+<div class="card" style="margin-bottom: 2rem;">
+    <h3 style="font-size: 1.25rem; margin-bottom: 1rem; color: #fbbf24;">
+        <i class="fa-solid fa-triangle-exclamation"></i> Problem Statement
+    </h3>
+    <div style="background: rgba(245, 158, 11, 0.08); border-left: 4px solid var(--status-moderate); padding: 1.25rem; border-radius: 0 10px 10px 0; color: var(--text-primary); font-size: 0.92rem; line-height: 1.7;">
+        <p style="margin-bottom: 0.75rem;">
+            Traditional water-quality monitoring relies heavily on manual sampling and laboratory testing. This process can be time-consuming, expensive and difficult to perform continuously over large geographical areas. Remote water bodies may not be monitored frequently, resulting in delayed identification of pollution or water-quality deterioration.
+        </p>
+        <p>
+            QuaNet Vision proposes a hybrid approach that combines IoT-based water-quality data and satellite imagery with deep learning techniques to provide intelligent water-quality prediction and monitoring.
+        </p>
+    </div>
+</div>
+
+<!-- Existing vs Proposed Architecture -->
+<div class="card">
+    <h3 style="font-size: 1.3rem; margin-bottom: 1.25rem; text-align: center;">
+        <i class="fa-solid fa-code-compare"></i> Existing vs. Proposed System Architecture
+    </h3>
+    <div class="grid-2">
+        <!-- Existing -->
+        <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 12px; padding: 1.5rem;">
+            <h4 style="color: #f87171; font-size: 1.05rem; margin-bottom: 1rem; text-align: center;">
+                <i class="fa-solid fa-ban"></i> Existing Traditional System
+            </h4>
+            <div style="background: #0b1329; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 1rem; font-family: monospace; font-size: 0.85rem; line-height: 1.8; text-align: center; color: var(--text-secondary); margin-bottom: 1rem;">
+                Water Body<br>
+                ↓<br>
+                Manual Sample Collection<br>
+                ↓<br>
+                Laboratory Testing<br>
+                ↓<br>
+                Human Analysis<br>
+                ↓<br>
+                Delayed Water Quality Report
+            </div>
+            <div style="font-size: 0.82rem; color: #fca5a5;">
+                <strong>Limitations:</strong> Manual, high cost, slow turnaround, unscalable, delayed detection.
+            </div>
+        </div>
+
+        <!-- Proposed -->
+        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 1.5rem;">
+            <h4 style="color: #34d399; font-size: 1.05rem; margin-bottom: 1rem; text-align: center;">
+                <i class="fa-solid fa-circle-check"></i> Proposed QuaNet Vision System
+            </h4>
+            <div style="background: #0b1329; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 1rem; font-family: monospace; font-size: 0.85rem; line-height: 1.8; text-align: center; color: #38bdf8; margin-bottom: 1rem;">
+                IoT Sensors ────┐<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Data Processing (CNN + LSTM)<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↑<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+                Satellite Images ┘<br>
+                ↓<br>
+                Multimodal Data Fusion<br>
+                ↓<br>
+                AI Water Quality Prediction & Alerts
+            </div>
+            <div style="font-size: 0.82rem; color: #6ee7b7;">
+                <strong>Advantages:</strong> Automated, real-time, spatial-temporal coverage, early alert triggers.
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block title %}Satellite Analysis — QuaNet Vision{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <span class="badge badge-info" style="margin-bottom: 0.5rem;">Convolutional Neural Network Remote Sensing</span>
+    <h1 style="font-size: 2.2rem;">Satellite Imagery Analysis Studio</h1>
+    <p style="color: var(--text-secondary); max-width: 800px; margin-top: 0.35rem;">
+        Process multispectral & optical satellite tiles through CNN convolutional filters to detect algal chlorophyll absorption, suspended sediment plumes, and spatial surface turbidity.
+    </p>
+</div>
+
+<!-- Sample Selector Gallery -->
+<div class="card" style="margin-bottom: 2rem;">
+    <div class="card-header">
+        <span class="card-title"><i class="fa-solid fa-images" style="color: #38bdf8;"></i> Select a Reference Satellite Tile</span>
+        <span class="badge badge-info">Curated Datasets</span>
+    </div>
+
+    <div class="grid-3">
+        {% for sample in samples %}
+            <div class="sample-sat-card" data-filename="{{ sample.filename }}" data-category="{{ sample.category }}" style="background: rgba(11, 19, 41, 0.7); border: 1px solid var(--border-color); border-radius: 12px; padding: 1rem; cursor: pointer; transition: all 0.2s ease;">
+                <div style="display: flex; gap: 0.85rem; align-items: center; margin-bottom: 0.5rem;">
+                    <img src="{{ url_for('dataset_image', category=sample.category|lower, filename=sample.filename) }}" alt="{{ sample.name }}" style="width: 50px; height: 50px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border-color);">
+                    <div>
+                        <h4 style="font-size: 0.92rem; color: #ffffff;">{{ sample.name }}</h4>
+                        <span class="badge badge-{{ sample.category|lower }}" style="font-size: 0.65rem; padding: 0.1rem 0.35rem;">
+                            {{ sample.category }}
+                        </span>
+                    </div>
+                </div>
+                <p style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.4;">{{ sample.desc }}</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="grid-2" style="margin-bottom: 2rem; align-items: start;">
+    <!-- Upload / Analysis Controls -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title"><i class="fa-solid fa-cloud-arrow-up" style="color: #38bdf8;"></i> Upload & Process Satellite Tile</span>
+        </div>
+
+        <form method="POST" action="{{ url_for('satellite.index') }}" enctype="multipart/form-data" id="satAnalysisForm">
+            <input type="hidden" name="sample_image" id="selectedSampleInput" value="">
+
+            <div class="form-group">
+                <label class="form-label">Water Body Target</label>
+                <select name="water_body_id" class="form-select">
+                    {% for wb in water_bodies %}
+                        <option value="{{ wb.id }}">{{ wb.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Upload Drag-Drop Box -->
+            <div class="form-group">
+                <label class="form-label">Satellite Image Tile (JPG / PNG)</label>
+                <div style="border: 2px dashed rgba(56, 189, 248, 0.3); border-radius: 12px; padding: 2rem 1rem; text-align: center; background: rgba(11, 19, 41, 0.6); position: relative;">
+                    <div id="uploadPrompt">
+                        <div style="font-size: 2rem; color: #38bdf8; margin-bottom: 0.5rem;"><i class="fa-solid fa-satellite-dish"></i></div>
+                        <div style="font-size: 0.88rem; color: #ffffff; font-weight: 600;">Choose a file or click a preset sample above</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Supports RGB, Landsat, Sentinel-2 spectral composites (128x128 tiles)</div>
+                    </div>
+                    <img id="satPreviewImg" src="" alt="Selected Satellite Tile" style="display: none; max-width: 140px; max-height: 140px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color); object-fit: cover;">
+                    <input type="file" name="satellite_image" id="satFileInput" accept="image/*" style="margin-top: 1rem; font-size: 0.82rem; color: var(--text-secondary);">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; font-size: 1rem; margin-top: 0.5rem;">
+                <i class="fa-solid fa-microscope"></i> Run CNN Feature Extraction
+            </button>
+        </form>
+    </div>
+
+    <!-- CNN Analysis Result Column -->
+    <div>
+        {% if result %}
+            <div class="card" style="border-left: 4px solid {% if result.predicted_condition == 'GOOD' %}#10b981{% elif result.predicted_condition == 'MODERATE' %}#f59e0b{% else %}#ef4444{% endif %};">
+                <div class="card-header">
+                    <span class="card-title"><i class="fa-solid fa-brain" style="color: #38bdf8;"></i> CNN Spatial Diagnostic</span>
+                    <span class="badge badge-{{ result.predicted_condition|lower }}">
+                        {{ result.predicted_condition }}
+                    </span>
+                </div>
+
+                <div style="display: flex; gap: 1.25rem; align-items: center; margin-bottom: 1.25rem;">
+                    {% if image_url %}
+                        <img src="{{ image_url }}" alt="Analyzed Tile" style="width: 90px; height: 90px; border-radius: 10px; object-fit: cover; border: 2px solid var(--border-color);">
+                    {% endif %}
+                    <div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Predicted Spatial Condition</div>
+                        <div style="font-size: 1.9rem; font-weight: 800; color: {% if result.predicted_condition == 'GOOD' %}#10b981{% elif result.predicted_condition == 'MODERATE' %}#f59e0b{% else %}#ef4444{% endif %};">
+                            {{ result.predicted_condition }}
+                        </div>
+                        <div style="font-size: 0.82rem; color: var(--text-secondary);">CNN Confidence: <strong style="color: #38bdf8;">{{ result.confidence }}%</strong></div>
+                    </div>
+                </div>
+
+                <!-- Extracted Optical Indices Grid -->
+                <h4 style="font-size: 0.95rem; margin-bottom: 0.75rem; color: #ffffff;">Extracted Spectral & Spatial Features:</h4>
+                <div class="grid-2" style="margin-bottom: 1.25rem; font-size: 0.82rem;">
+                    <div style="background: rgba(11, 19, 41, 0.7); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.75rem;">
+                        <span style="color: var(--text-muted);">Turbidity Optical Index</span>
+                        <div style="font-size: 1.2rem; font-weight: 800; color: #ffffff; margin-top: 0.2rem;">
+                            {{ result.metrics.turbidity_optical_index }}
+                        </div>
+                        <div style="font-size: 0.72rem; color: var(--text-secondary);">Red/Blue reflectance ratio</div>
+                    </div>
+
+                    <div style="background: rgba(11, 19, 41, 0.7); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.75rem;">
+                        <span style="color: var(--text-muted);">Algal NDWI Proxy</span>
+                        <div style="font-size: 1.2rem; font-weight: 800; color: #34d399; margin-top: 0.2rem;">
+                            {{ result.metrics.algal_ndwi_proxy }}
+                        </div>
+                        <div style="font-size: 0.72rem; color: var(--text-secondary);">Chlorophyll green absorption</div>
+                    </div>
+
+                    <div style="background: rgba(11, 19, 41, 0.7); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.75rem;">
+                        <span style="color: var(--text-muted);">Texture Variance (Laplacian)</span>
+                        <div style="font-size: 1.2rem; font-weight: 800; color: #a78bfa; margin-top: 0.2rem;">
+                            {{ result.metrics.texture_variance }}
+                        </div>
+                        <div style="font-size: 0.72rem; color: var(--text-secondary);">Suspended particulate entropy</div>
+                    </div>
+
+                    <div style="background: rgba(11, 19, 41, 0.7); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.75rem;">
+                        <span style="color: var(--text-muted);">Mean Color Band Profile</span>
+                        <div style="font-size: 0.85rem; font-weight: 700; color: #ffffff; margin-top: 0.35rem;">
+                            B: {{ result.metrics.mean_blue }} | G: {{ result.metrics.mean_green }} | R: {{ result.metrics.mean_red }}
+                        </div>
+                        <div style="font-size: 0.72rem; color: var(--text-secondary);">RGB Optical Radiance</div>
+                    </div>
+                </div>
+
+                <div style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 0.75rem;">
+                    <i class="fa-solid fa-circle-check" style="color: #34d399;"></i> 32-Dimensional Spatial Embedding extracted for Multimodal Data Fusion.
+                </div>
+            </div>
+        {% else %}
+            <div class="card" style="text-align: center; padding: 3rem 1.5rem;">
+                <div style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem;">
+                    <i class="fa-solid fa-satellite"></i>
+                </div>
+                <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">Satellite Diagnostic Ready</h3>
+                <p style="font-size: 0.88rem; color: var(--text-secondary); max-width: 350px; margin: 0 auto;">
+                    Select one of the sample satellite tiles above or upload an optical image tile to extract CNN spectral feature maps.
+                </p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Recent Satellite Analysis Logs -->
+{% if recent_records %}
+<div class="card">
+    <div class="card-header">
+        <span class="card-title"><i class="fa-solid fa-clock-rotate-left" style="color: #38bdf8;"></i> Recent Satellite Spatial Records</span>
+    </div>
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Station</th>
+                    <th>Image Tile</th>
+                    <th>Turbidity Index</th>
+                    <th>Algal NDWI</th>
+                    <th>Condition</th>
+                    <th>Confidence</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sr in recent_records %}
+                    <tr>
+                        <td>{{ sr.timestamp }}</td>
+                        <td>{{ sr.water_body_name or 'Station' }}</td>
+                        <td><span style="font-family: monospace; font-size: 0.8rem;">{{ sr.image_filename }}</span></td>
+                        <td>{{ sr.turbidity_index }}</td>
+                        <td>{{ sr.algae_risk_index }}</td>
+                        <td>
+                            <span class="badge badge-{{ sr.detected_condition|lower }}">
+                                {{ sr.detected_condition }}
+                            </span>
+                        </td>
+                        <td><strong>{{ sr.confidence }}%</strong></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/satellite.js') }}"></script>
+{% endblock %}

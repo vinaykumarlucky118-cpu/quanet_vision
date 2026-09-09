@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Contact & Inquiries — QuaNet Vision{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <span class="badge badge-info" style="margin-bottom: 0.5rem;">Academic Demonstration Inquiry</span>
+    <h1 style="font-size: 2.2rem;">Contact & Project Inquiries</h1>
+    <p style="color: var(--text-secondary); max-width: 700px; margin-top: 0.35rem;">
+        Have questions regarding the QuaNet Vision hybrid AI architecture, dataset formatting, or IoT deployment? Send a message below.
+    </p>
+</div>
+
+<div class="grid-2" style="align-items: start; margin-bottom: 2rem;">
+    <!-- Contact Form -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title"><i class="fa-regular fa-envelope" style="color: #38bdf8;"></i> Send a Message</span>
+        </div>
+
+        {% if message_sent %}
+            <div class="alert alert-success" style="margin-bottom: 1.5rem;">
+                <i class="fa-solid fa-circle-check"></i>
+                <span style="margin-left: 0.5rem;">Thank you! Your demo message has been received successfully.</span>
+            </div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('dashboard.contact') }}">
+            <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" name="name" class="form-control" placeholder="e.g. Dr. Jane Smith / Student Evaluator" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" name="email" class="form-control" placeholder="name@institution.edu" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Inquiry Message</label>
+                <textarea name="message" class="form-control" rows="5" placeholder="Enter your inquiry, feedback, or test questions regarding the AI models..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.8rem;">
+                <i class="fa-solid fa-paper-plane"></i> Send Message
+            </button>
+        </form>
+    </div>
+
+    <!-- Demonstration Notes Card -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title"><i class="fa-solid fa-circle-question" style="color: #34d399;"></i> Academic Demo Notes</span>
+        </div>
+
+        <div style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.7; display: flex; flex-direction: column; gap: 0.85rem;">
+            <p>
+                <strong>Evaluation Mode:</strong> This frontend form operates as a local demonstration interface and does not require an external third-party mailer API.
+            </p>
+            <p>
+                <strong>Live REST API Ingestion:</strong> Hardware engineers and researchers can transmit real-time telemetry packets directly via HTTP POST to:
+                <br>
+                <code style="background: rgba(11, 19, 41, 0.9); padding: 0.35rem 0.6rem; border-radius: 6px; color: #38bdf8; display: inline-block; margin-top: 0.3rem;">
+                    POST http://127.0.0.1:5000/api/iot-ingest
+                </code>
+            </p>
+            <p>
+                <strong>Source Code Repository:</strong> Available in the local root folder with comprehensive test coverage in <code>tests/</code>.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

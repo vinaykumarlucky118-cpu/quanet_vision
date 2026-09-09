@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Server Error — QuaNet Vision{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 550px; margin: 4rem auto; text-align: center; padding: 3rem 2rem;">
+    <div style="font-size: 3.5rem; color: #f87171; margin-bottom: 1rem;">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+    </div>
+    <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">500 — Application Notice</h1>
+    <p style="color: var(--text-secondary); margin-bottom: 2rem; font-size: 0.92rem;">
+        {{ error_message or "An unexpected server condition occurred while processing water quality parameters. Please try again." }}
+    </p>
+    <a href="{{ url_for('dashboard.index') }}" class="btn btn-primary">
+        <i class="fa-solid fa-gauge-high"></i> Back to Dashboard
+    </a>
+</div>
+{% endblock %}

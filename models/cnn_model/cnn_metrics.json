@@ -1,0 +1,9 @@
+{
+    "accuracy": 100.0,
+    "precision": 100.0,
+    "recall": 100.0,
+    "f1_score": 100.0,
+    "architecture": "Conv2D-BatchNorm-ReLU-MaxPool-AdaptiveAvgPool-FC",
+    "embedding_dim": 32,
+    "input_resolution": "128x128x3"
+}

@@ -1,0 +1,23 @@
+{
+    "feature_cols": [
+        "ph",
+        "temperature",
+        "turbidity",
+        "dissolved_oxygen",
+        "tds",
+        "conductivity"
+    ],
+    "label_map": {
+        "GOOD": 0,
+        "MODERATE": 1,
+        "POOR": 2
+    },
+    "reverse_label_map": {
+        "0": "GOOD",
+        "1": "MODERATE",
+        "2": "POOR"
+    },
+    "n_samples": 1200,
+    "train_samples": 960,
+    "test_samples": 240
+}

@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}Home — QuaNet Vision{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section style="padding: 2.5rem 0 3.5rem 0; text-align: center; position: relative;">
+    <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(14, 165, 233, 0.12); border: 1px solid rgba(14, 165, 233, 0.3); padding: 0.35rem 0.9rem; border-radius: 9999px; font-size: 0.82rem; font-weight: 600; color: #38bdf8; margin-bottom: 1.5rem;">
+        <i class="fa-solid fa-satellite-dish"></i> A Hybrid IoT–Satellite Deep Learning System
+    </div>
+
+    <h1 style="font-size: 2.8rem; font-weight: 800; max-width: 900px; margin: 0 auto 1.25rem; letter-spacing: -1px; line-height: 1.2;">
+        Intelligent Water Quality <span style="background: linear-gradient(135deg, #38bdf8, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Prediction with AI</span>
+    </h1>
+
+    <p style="font-size: 1.15rem; color: var(--text-secondary); max-width: 760px; margin: 0 auto 2.25rem; line-height: 1.6;">
+        Combining IoT sensor data, satellite imagery, CNN and LSTM deep learning for smarter, continuous water-quality monitoring and early pollution detection.
+    </p>
+
+    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 3.5rem;">
+        <a href="{{ url_for('dashboard.index') }}" class="btn btn-primary" style="padding: 0.8rem 1.8rem; font-size: 1rem;">
+            <i class="fa-solid fa-gauge-high"></i> Explore Dashboard
+        </a>
+        <a href="{{ url_for('dashboard.how_it_works') }}" class="btn btn-outline" style="padding: 0.8rem 1.8rem; font-size: 1rem;">
+            <i class="fa-solid fa-diagram-project"></i> How It Works
+        </a>
+    </div>
+
+    <!-- Project Statistics Cards -->
+    <div class="grid-4" style="text-align: left;">
+        <div class="card" style="border-left: 3px solid #0ea5e9;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 600;">Data Sources</span>
+                <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(14, 165, 233, 0.15); display: flex; align-items: center; justify-content: center; color: #38bdf8;">
+                    <i class="fa-solid fa-network-wired"></i>
+                </div>
+            </div>
+            <h3 style="font-size: 1.35rem; font-weight: 800; color: #ffffff;">IoT + Satellite</h3>
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.35rem;">Multi-station in-situ telemetry fused with multispectral satellite tiles.</p>
+        </div>
+
+        <div class="card" style="border-left: 3px solid #8b5cf6;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 600;">AI Models</span>
+                <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(139, 92, 246, 0.15); display: flex; align-items: center; justify-content: center; color: #a78bfa;">
+                    <i class="fa-solid fa-brain"></i>
+                </div>
+            </div>
+            <h3 style="font-size: 1.35rem; font-weight: 800; color: #ffffff;">CNN + LSTM</h3>
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.35rem;">Spatial computer vision and recurrent time-series sequential learning.</p>
+        </div>
+
+        <div class="card" style="border-left: 3px solid #10b981;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 600;">Monitoring</span>
+                <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(16, 185, 129, 0.15); display: flex; align-items: center; justify-content: center; color: #34d399;">
+                    <i class="fa-solid fa-tower-broadcast"></i>
+                </div>
+            </div>
+            <h3 style="font-size: 1.35rem; font-weight: 800; color: #ffffff;">Real-Time Ready</h3>
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.35rem;">Dynamic REST API endpoints ready for direct ESP32 hardware connection.</p>
+        </div>
+
+        <div class="card" style="border-left: 3px solid #f59e0b;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <span style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 600;">Prediction</span>
+                <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(245, 158, 11, 0.15); display: flex; align-items: center; justify-content: center; color: #fbbf24;">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+            </div>
+            <h3 style="font-size: 1.35rem; font-weight: 800; color: #ffffff;">Water Quality</h3>
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.35rem;">Multi-class classification (GOOD / MODERATE / POOR) with safety advisories.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Problem Section -->
+<section style="margin: 3.5rem 0;">
+    <div style="text-align: center; margin-bottom: 2.5rem;">
+        <span class="badge badge-info" style="margin-bottom: 0.5rem;">The Challenge</span>
+        <h2 style="font-size: 2rem;">Why Water Quality Monitoring Matters</h2>
+        <p style="color: var(--text-secondary); max-width: 680px; margin: 0.5rem auto 0;">
+            Freshwater ecosystems and reservoirs face increasing pressure from industrial runoff, agricultural effluent, and urban discharge.
+        </p>
+    </div>
+
+    <div class="card" style="background: linear-gradient(135deg, rgba(18, 32, 60, 0.85), rgba(15, 23, 42, 0.95));">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center;">
+            <div>
+                <h3 style="font-size: 1.3rem; margin-bottom: 1rem; color: #f87171;">
+                    <i class="fa-solid fa-circle-exclamation"></i> Limitations of Traditional Monitoring
+                </h3>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.85rem; color: var(--text-secondary); font-size: 0.92rem;">
+                    <li style="display: flex; gap: 0.75rem; align-items: flex-start;">
+                        <i class="fa-solid fa-xmark text-danger" style="color: #ef4444; margin-top: 0.25rem;"></i>
+                        <div><strong>Time-Consuming & Slow:</strong> Manual water sample collection and laboratory titration take days to deliver results.</div>
+                    </li>
+                    <li style="display: flex; gap: 0.75rem; align-items: flex-start;">
+                        <i class="fa-solid fa-xmark text-danger" style="color: #ef4444; margin-top: 0.25rem;"></i>
+                        <div><strong>High Expense & Infrastructure:</strong> Recurring physical laboratory logistics and manual staffing costs.</div>
+                    </li>
+                    <li style="display: flex; gap: 0.75rem; align-items: flex-start;">
+                        <i class="fa-solid fa-xmark text-danger" style="color: #ef4444; margin-top: 0.25rem;"></i>
+                        <div><strong>Difficult to Scale:</strong> Remote and expansive lakes cannot be physically sampled across every coordinate frequently.</div>
+                    </li>
+                    <li style="display: flex; gap: 0.75rem; align-items: flex-start;">
+                        <i class="fa-solid fa-xmark text-danger" style="color: #ef4444; margin-top: 0.25rem;"></i>
+                        <div><strong>Delayed Pollution Detection:</strong> Contamination spikes are discovered only after ecological damage or public health risks have emerged.</div>
+                    </li>
+                </ul>
+            </div>
+
+            <div style="background: rgba(11, 19, 41, 0.8); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem;">
+                <h4 style="font-size: 1.05rem; margin-bottom: 0.75rem; color: #38bdf8;">
+                    <i class="fa-solid fa-lightbulb"></i> The QuaNet Vision Approach
+                </h4>
+                <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
+                    QuaNet Vision proposes an intelligent hybrid deep learning framework. By pairing local in-situ IoT telemetry (capturing instantaneous chemistry) with satellite remote sensing (capturing wide-area spectral dispersion), the system eliminates blind spots and delivers automated early warnings.
+                </p>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <span class="badge badge-good">✓ Continuous Telemetry</span>
+                    <span class="badge badge-info">✓ Remote Sensing</span>
+                    <span class="badge badge-warning">✓ Early Pollution Alerts</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Solution Section -->
+<section style="margin: 3.5rem 0;">
+    <div style="text-align: center; margin-bottom: 2.5rem;">
+        <span class="badge badge-info" style="margin-bottom: 0.5rem;">Architecture</span>
+        <h2 style="font-size: 2rem;">Our Intelligent Solution</h2>
+        <p style="color: var(--text-secondary); max-width: 680px; margin: 0.5rem auto 0;">
+            A modular 4-pillar pipeline transforming raw environmental telemetry into actionable water conservation insights.
+        </p>
+    </div>
+
+    <div class="grid-4">
+        <div class="card" style="text-align: center; padding: 2rem 1.25rem;">
+            <div style="width: 52px; height: 52px; border-radius: 14px; background: rgba(14, 165, 233, 0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; color: #38bdf8; font-size: 1.5rem;">
+                <i class="fa-solid fa-microchip"></i>
+            </div>
+            <h3 style="font-size: 1.15rem; margin-bottom: 0.5rem;">1. IoT Monitoring</h3>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+                Collects key multi-parameter indicators including pH, Temp, Turbidity, Dissolved Oxygen, TDS, and Conductivity.
+            </p>
+        </div>
+
+        <div class="card" style="text-align: center; padding: 2rem 1.25rem;">
+            <div style="width: 52px; height: 52px; border-radius: 14px; background: rgba(16, 185, 129, 0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; color: #34d399; font-size: 1.5rem;">
+                <i class="fa-solid fa-satellite"></i>
+            </div>
+            <h3 style="font-size: 1.15rem; margin-bottom: 0.5rem;">2. Satellite Observation</h3>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+                Analyzes optical satellite imagery across water bodies to capture algal blooms, surface sediment plumes, and turbidity gradients.
+            </p>
+        </div>
+
+        <div class="card" style="text-align: center; padding: 2rem 1.25rem;">
+            <div style="width: 52px; height: 52px; border-radius: 14px; background: rgba(139, 92, 246, 0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; color: #a78bfa; font-size: 1.5rem;">
+                <i class="fa-solid fa-layer-group"></i>
+            </div>
+            <h3 style="font-size: 1.15rem; margin-bottom: 0.5rem;">3. Deep Learning Fusion</h3>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+                CNN extracts visual textures while LSTM learns time-series parameter trajectory, fusing spatial and temporal feature embeddings.
+            </p>
+        </div>
+
+        <div class="card" style="text-align: center; padding: 2rem 1.25rem;">
+            <div style="width: 52px; height: 52px; border-radius: 14px; background: rgba(245, 158, 11, 0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; color: #fbbf24; font-size: 1.5rem;">
+                <i class="fa-solid fa-bell"></i>
+            </div>
+            <h3 style="font-size: 1.15rem; margin-bottom: 0.5rem;">4. Smart Prediction</h3>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+                Generates instant water quality status (GOOD, MODERATE, POOR), confidence estimates, automated alerts, and scientific advisories.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action Banner -->
+<section style="margin-top: 4rem;">
+    <div class="card" style="background: linear-gradient(135deg, rgba(14, 165, 233, 0.25), rgba(99, 102, 241, 0.18)); border-color: rgba(56, 189, 248, 0.4); text-align: center; padding: 3rem 2rem;">
+        <h2 style="font-size: 2rem; font-weight: 800; margin-bottom: 0.75rem;">Explore the Live Monitoring Prototype</h2>
+        <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 1.75rem; font-size: 1rem;">
+            Test the interactive dashboard with multi-station time-series telemetry, run custom predictions, or upload satellite tiles for CNN diagnosis.
+        </p>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <a href="{{ url_for('dashboard.index') }}" class="btn btn-primary" style="padding: 0.75rem 1.75rem;">
+                <i class="fa-solid fa-gauge-high"></i> Open Live Dashboard
+            </a>
+            <a href="{{ url_for('prediction.index') }}" class="btn btn-outline" style="padding: 0.75rem 1.75rem;">
+                <i class="fa-solid fa-vial"></i> Test Prediction Model
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

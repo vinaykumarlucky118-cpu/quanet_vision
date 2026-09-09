@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}About Team & Academic Credits — QuaNet Vision{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <span class="badge badge-info" style="margin-bottom: 0.5rem;">Academic Project Profile</span>
+    <h1 style="font-size: 2.2rem;">Project Team & Academic Credits</h1>
+    <p style="color: var(--text-secondary); max-width: 750px; margin-top: 0.35rem;">
+        Developed as an academic major capstone project in Artificial Intelligence & Machine Learning.
+    </p>
+</div>
+
+<!-- Project Metadata Card -->
+<div class="card" style="margin-bottom: 2rem;">
+    <div class="card-header">
+        <span class="card-title" style="color: #38bdf8;">
+            <i class="fa-solid fa-graduation-cap"></i> Project Specification
+        </span>
+        <span class="demo-pill">B.Tech CSE (AI & ML)</span>
+    </div>
+
+    <div class="grid-2" style="font-size: 0.92rem; gap: 1.25rem;">
+        <div>
+            <strong style="color: var(--text-secondary);">Project Title:</strong>
+            <div style="color: #ffffff; font-weight: 700; margin-top: 0.2rem;">QuaNet Vision: Deep Learning for Intelligent Water Quality Prediction</div>
+        </div>
+
+        <div>
+            <strong style="color: var(--text-secondary);">Project Subtitle:</strong>
+            <div style="color: #ffffff; font-weight: 700; margin-top: 0.2rem;">A Hybrid IoT–Satellite Deep Learning System</div>
+        </div>
+
+        <div>
+            <strong style="color: var(--text-secondary);">Domain & Specialization:</strong>
+            <div style="color: #ffffff; margin-top: 0.2rem;">Artificial Intelligence, Deep Learning, Computer Vision, Environmental IoT Monitoring</div>
+        </div>
+
+        <div>
+            <strong style="color: var(--text-secondary);">Technology Stack:</strong>
+            <div style="color: #ffffff; margin-top: 0.2rem;">Python 3.11, Flask, PyTorch (CNN + LSTM), Scikit-learn, Chart.js, SQLite, OpenCV</div>
+        </div>
+    </div>
+</div>
+
+<!-- Student & Faculty Editable Placeholders Card -->
+<div class="grid-2" style="margin-bottom: 2rem;">
+    <!-- Student Information -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title"><i class="fa-solid fa-user-graduate" style="color: #38bdf8;"></i> Student Details</span>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 1rem; font-size: 0.9rem;">
+            <div style="background: rgba(11, 19, 41, 0.7); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.85rem;">
+                <span style="color: var(--text-muted); font-size: 0.78rem; text-transform: uppercase;">Student Name</span>
+                <div style="font-size: 1.05rem; font-weight: 700; color: #ffffff; margin-top: 0.15rem;">[ Student Name ]</div>
+            </div>
+
+            <div style="background: rgba(11, 19, 41, 0.7); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.85rem;">
+                <span style="color: var(--text-muted); font-size: 0.78rem; text-transform: uppercase;">Register Number</span>
+                <div style="font-size: 1.05rem; font-weight: 700; color: #ffffff; margin-top: 0.15rem;">[ Register Number ]</div>
+            </div>
+
+            <div style="background: rgba(11, 19, 41, 0.7); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.85rem;">
+                <span style="color: var(--text-muted); font-size: 0.78rem; text-transform: uppercase;">Department & Degree</span>
+                <div style="font-size: 1.05rem; font-weight: 700; color: #ffffff; margin-top: 0.15rem;">Computer Science & Engineering (AI & ML)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Institutional & Guide Information -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title"><i class="fa-solid fa-building-columns" style="color: #34d399;"></i> Institution & Guide</span>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 1rem; font-size: 0.9rem;">
+            <div style="background: rgba(11, 19, 41, 0.7); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.85rem;">
+                <span style="color: var(--text-muted); font-size: 0.78rem; text-transform: uppercase;">College / University</span>
+                <div style="font-size: 1.05rem; font-weight: 700; color: #ffffff; margin-top: 0.15rem;">[ College / University Name ]</div>
+            </div>
+
+            <div style="background: rgba(11, 19, 41, 0.7); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.85rem;">
+                <span style="color: var(--text-muted); font-size: 0.78rem; text-transform: uppercase;">Project Guide / Mentor</span>
+                <div style="font-size: 1.05rem; font-weight: 700; color: #ffffff; margin-top: 0.15rem;">[ Project Guide Name, Designation ]</div>
+            </div>
+
+            <div style="background: rgba(11, 19, 41, 0.7); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.85rem;">
+                <span style="color: var(--text-muted); font-size: 0.78rem; text-transform: uppercase;">Academic Year</span>
+                <div style="font-size: 1.05rem; font-weight: 700; color: #ffffff; margin-top: 0.15rem;">2025 – 2026</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

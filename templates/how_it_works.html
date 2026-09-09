@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block title %}How It Works — QuaNet Vision{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem; text-align: center;">
+    <span class="badge badge-info" style="margin-bottom: 0.5rem;">Methodology & Workflow</span>
+    <h1 style="font-size: 2.3rem;">How QuaNet Vision Operates</h1>
+    <p style="color: var(--text-secondary); max-width: 750px; margin: 0.4rem auto 0;">
+        From in-situ IoT telemetry and orbital satellite imagery to deep multimodal neural network fusion and real-time dashboard analytics.
+    </p>
+</div>
+
+<!-- 8-Step Visual Process Timeline -->
+<div class="card" style="margin-bottom: 2.5rem;">
+    <h2 style="font-size: 1.35rem; margin-bottom: 1.5rem; color: #38bdf8; text-align: center;">
+        <i class="fa-solid fa-route"></i> 8-Stage End-to-End Workflow
+    </h2>
+
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;">
+        <div style="background: rgba(11, 19, 41, 0.8); border: 1px solid var(--border-color); border-radius: 10px; padding: 1.15rem; position: relative;">
+            <div style="position: absolute; top: 8px; right: 10px; font-size: 0.75rem; font-weight: 800; color: #38bdf8;">01</div>
+            <div style="font-size: 1.2rem; color: #38bdf8; margin-bottom: 0.4rem;"><i class="fa-solid fa-tower-broadcast"></i></div>
+            <h4 style="font-size: 0.95rem; margin-bottom: 0.3rem;">1. Data Collection</h4>
+            <p style="font-size: 0.78rem; color: var(--text-muted);">In-situ telemetry polls pH, Temp, Turbidity, DO, TDS, and Conductivity.</p>
+        </div>
+
+        <div style="background: rgba(11, 19, 41, 0.8); border: 1px solid var(--border-color); border-radius: 10px; padding: 1.15rem; position: relative;">
+            <div style="position: absolute; top: 8px; right: 10px; font-size: 0.75rem; font-weight: 800; color: #34d399;">02</div>
+            <div style="font-size: 1.2rem; color: #34d399; margin-bottom: 0.4rem;"><i class="fa-solid fa-satellite"></i></div>
+            <h4 style="font-size: 0.95rem; margin-bottom: 0.3rem;">2. Satellite Data</h4>
+            <p style="font-size: 0.78rem; color: var(--text-muted);">Optical satellite imagery captures spatial surface conditions and regional water body scope.</p>
+        </div>
+
+        <div style="background: rgba(11, 19, 41, 0.8); border: 1px solid var(--border-color); border-radius: 10px; padding: 1.15rem; position: relative;">
+            <div style="position: absolute; top: 8px; right: 10px; font-size: 0.75rem; font-weight: 800; color: #fbbf24;">03</div>
+            <div style="font-size: 1.2rem; color: #fbbf24; margin-bottom: 0.4rem;"><i class="fa-solid fa-filter"></i></div>
+            <h4 style="font-size: 0.95rem; margin-bottom: 0.3rem;">3. Preprocessing</h4>
+            <p style="font-size: 0.78rem; color: var(--text-muted);">StandardScaler normalizes telemetry; image tiles resized to 128x128 with NDWI filtering.</p>
+        </div>
+
+        <div style="background: rgba(11, 19, 41, 0.8); border: 1px solid var(--border-color); border-radius: 10px; padding: 1.15rem; position: relative;">
+            <div style="position: absolute; top: 8px; right: 10px; font-size: 0.75rem; font-weight: 800; color: #a78bfa;">04</div>
+            <div style="font-size: 1.2rem; color: #a78bfa; margin-bottom: 0.4rem;"><i class="fa-solid fa-eye"></i></div>
+            <h4 style="font-size: 0.95rem; margin-bottom: 0.3rem;">4. CNN Vision</h4>
+            <p style="font-size: 0.78rem; color: var(--text-muted);">Convolutional layers extract spatial turbidity gradients and chlorophyll pigment features.</p>
+        </div>
+
+        <div style="background: rgba(11, 19, 41, 0.8); border: 1px solid var(--border-color); border-radius: 10px; padding: 1.15rem; position: relative;">
+            <div style="position: absolute; top: 8px; right: 10px; font-size: 0.75rem; font-weight: 800; color: #a78bfa;">05</div>
+            <div style="font-size: 1.2rem; color: #a78bfa; margin-bottom: 0.4rem;"><i class="fa-solid fa-clock-rotate-left"></i></div>
+            <h4 style="font-size: 0.95rem; margin-bottom: 0.3rem;">5. LSTM Dynamics</h4>
+            <p style="font-size: 0.78rem; color: var(--text-muted);">Recurrent cells analyze sliding time-series windows to detect parameter rate-of-change.</p>
+        </div>
+
+        <div style="background: rgba(11, 19, 41, 0.8); border: 1px solid var(--border-color); border-radius: 10px; padding: 1.15rem; position: relative;">
+            <div style="position: absolute; top: 8px; right: 10px; font-size: 0.75rem; font-weight: 800; color: #38bdf8;">06</div>
+            <div style="font-size: 1.2rem; color: #38bdf8; margin-bottom: 0.4rem;"><i class="fa-solid fa-code-merge"></i></div>
+            <h4 style="font-size: 0.95rem; margin-bottom: 0.3rem;">6. Data Fusion</h4>
+            <p style="font-size: 0.78rem; color: var(--text-muted);">Multimodal fusion layer merges temporal and spatial representation embeddings.</p>
+        </div>
+
+        <div style="background: rgba(11, 19, 41, 0.8); border: 1px solid var(--border-color); border-radius: 10px; padding: 1.15rem; position: relative;">
+            <div style="position: absolute; top: 8px; right: 10px; font-size: 0.75rem; font-weight: 800; color: #34d399;">07</div>
+            <div style="font-size: 1.2rem; color: #34d399; margin-bottom: 0.4rem;"><i class="fa-solid fa-award"></i></div>
+            <h4 style="font-size: 0.95rem; margin-bottom: 0.3rem;">7. Prediction</h4>
+            <p style="font-size: 0.78rem; color: var(--text-muted);">Classifies state (GOOD / MODERATE / POOR) with statistical confidence metrics.</p>
+        </div>
+
+        <div style="background: rgba(11, 19, 41, 0.8); border: 1px solid var(--border-color); border-radius: 10px; padding: 1.15rem; position: relative;">
+            <div style="position: absolute; top: 8px; right: 10px; font-size: 0.75rem; font-weight: 800; color: #f87171;">08</div>
+            <div style="font-size: 1.2rem; color: #f87171; margin-bottom: 0.4rem;"><i class="fa-solid fa-desktop"></i></div>
+            <h4 style="font-size: 0.95rem; margin-bottom: 0.3rem;">8. Dashboard & Alert</h4>
+            <p style="font-size: 0.78rem; color: var(--text-muted);">Renders interactive charts, notifies thresholds, and generates PDF compliance reports.</p>
+        </div>
+    </div>
+</div>
+
+<!-- CNN & LSTM Architectural Deep-Dive -->
+<div class="grid-2" style="margin-bottom: 2.5rem;">
+    <!-- CNN -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title" style="color: #38bdf8;">
+                <i class="fa-solid fa-satellite"></i> CNN — Convolutional Neural Network
+            </span>
+            <span class="badge badge-info">Spatial Vision</span>
+        </div>
+        <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
+            CNN is utilized for computer vision feature extraction from optical satellite tiles:
+        </p>
+        <div style="background: #0b1329; border: 1px solid var(--border-color); border-radius: 8px; padding: 0.75rem; font-family: monospace; font-size: 0.82rem; color: #38bdf8; text-align: center; margin-bottom: 1rem;">
+            Satellite Image → Conv2D + BatchNorm + MaxPool → Spatial Feature Embedding (32D)
+        </div>
+        <h5 style="font-size: 0.88rem; color: #ffffff; margin-bottom: 0.5rem;">CNN Visual Pattern Targets:</h5>
+        <ul style="list-style: none; font-size: 0.82rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 0.35rem;">
+            <li><i class="fa-solid fa-chevron-right text-info" style="font-size: 0.7rem; margin-right: 0.4rem;"></i> <strong>Turbidity Index:</strong> Red/Blue optical ratio indicating sediment plumes.</li>
+            <li><i class="fa-solid fa-chevron-right text-info" style="font-size: 0.7rem; margin-right: 0.4rem;"></i> <strong>Algal Blooms:</strong> Green chlorophyll absorption and NDWI proxy.</li>
+            <li><i class="fa-solid fa-chevron-right text-info" style="font-size: 0.7rem; margin-right: 0.4rem;"></i> <strong>Suspended Particulates:</strong> Surface texture variance & Laplacian entropy.</li>
+        </ul>
+    </div>
+
+    <!-- LSTM -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title" style="color: #a78bfa;">
+                <i class="fa-solid fa-clock-rotate-left"></i> LSTM — Long Short-Term Memory
+            </span>
+            <span class="badge badge-good" style="background: rgba(139, 92, 246, 0.15); color: #a78bfa; border-color: rgba(139, 92, 246, 0.4);">Sequential AI</span>
+        </div>
+        <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
+            LSTM is tailored for multi-sensor sequential time-series modeling:
+        </p>
+        <div style="background: #0b1329; border: 1px solid var(--border-color); border-radius: 8px; padding: 0.75rem; font-family: monospace; font-size: 0.82rem; color: #a78bfa; text-align: center; margin-bottom: 1rem;">
+            Sequential Sensor Telemetry (t-k ... t) → 2-Layer LSTM → Temporal Feature Vector
+        </div>
+        <h5 style="font-size: 0.88rem; color: #ffffff; margin-bottom: 0.5rem;">LSTM Temporal Targets:</h5>
+        <ul style="list-style: none; font-size: 0.82rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 0.35rem;">
+            <li><i class="fa-solid fa-chevron-right text-info" style="font-size: 0.7rem; margin-right: 0.4rem;"></i> <strong>Diurnal Temperature Cycles:</strong> Day/night fluctuation modeling.</li>
+            <li><i class="fa-solid fa-chevron-right text-info" style="font-size: 0.7rem; margin-right: 0.4rem;"></i> <strong>DO Depletion Velocity:</strong> Detects hypoxic decay trends before collapse.</li>
+            <li><i class="fa-solid fa-chevron-right text-info" style="font-size: 0.7rem; margin-right: 0.4rem;"></i> <strong>TDS & Salinity Creep:</strong> Captures cumulative mineral buildup over hours.</li>
+        </ul>
+    </div>
+</div>
+
+<!-- Comparison Table & Fusion Diagram -->
+<div class="card">
+    <h3 style="font-size: 1.25rem; margin-bottom: 1rem; color: #38bdf8;">
+        <i class="fa-solid fa-table-columns"></i> CNN vs. LSTM Comparison Matrix
+    </h3>
+    <div class="table-responsive" style="margin-bottom: 2rem;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Feature Dimension</th>
+                    <th>CNN (Convolutional Neural Network)</th>
+                    <th>LSTM (Long Short-Term Memory)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Domain</strong></td>
+                    <td>Computer Vision / Remote Sensing</td>
+                    <td>Sequential / Time-Series Modeling</td>
+                </tr>
+                <tr>
+                    <td><strong>Primary Input</strong></td>
+                    <td>Multispectral / RGB Satellite Tiles (128x128x3)</td>
+                    <td>6-Parameter Sensor Vector Streams</td>
+                </tr>
+                <tr>
+                    <td><strong>Extracted Information</strong></td>
+                    <td>Spatial textures, algal bloom dispersion, surface clarity</td>
+                    <td>Temporal trajectory, velocity of parameter changes, diurnal patterns</td>
+                </tr>
+                <tr>
+                    <td><strong>Core Mechanism</strong></td>
+                    <td>2D Convolutions + Pooling + Dense Embedding</td>
+                    <td>Recurrent Memory Cells (Forget, Input, Output Gates)</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Data Fusion ASCII Schematic -->
+    <h4 style="font-size: 1.1rem; margin-bottom: 0.75rem; text-align: center; color: #34d399;">
+        <i class="fa-solid fa-network-wired"></i> Multimodal Data Fusion Architecture
+    </h4>
+    <div style="background: #0b1329; border: 1px solid var(--border-color); border-radius: 10px; padding: 1.5rem; font-family: monospace; font-size: 0.88rem; line-height: 1.8; text-align: center; color: #38bdf8;">
+        Satellite Imagery [128x128x3] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; In-Situ Sensor Telemetry [Seq x 6]<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+        &nbsp;&nbsp;Satellite CNN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Temporal LSTM<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+        Spatial Embedding [32D] ───────────────┬─────────────── Temporal Embedding [32D]<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Multimodal Fusion Layer]<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Softmax Classification Head]<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Water Quality: GOOD ✓ | MODERATE ! | POOR ⚠
+    </div>
+</div>
+{% endblock %}

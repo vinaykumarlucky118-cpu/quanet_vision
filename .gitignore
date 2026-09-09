@@ -1,0 +1,32 @@
+# Python Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environments
+.venv/
+env/
+venv/
+ENV/
+
+# Environment Variables & Secrets
+.env
+.env.*
+*.env
+
+# VS Code User State
+.vscode/*
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
+!.vscode/extensions.json
+
+# Operating System
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Uploads cache (keep directory structure)
+uploads/*
+!uploads/.gitkeep

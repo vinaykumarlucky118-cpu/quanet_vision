@@ -1,0 +1,11 @@
+{
+    "recommendations": [
+        "ms-python.python",
+        "ms-python.debugpy",
+        "ms-python.vscode-pylance",
+        "samuelcolvin.jinjahtml",
+        "qwtel.sqlite-viewer",
+        "formulahendry.auto-rename-tag",
+        "ecmel.vscode-html-css"
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "accuracy": 100.0,
+    "precision": 100.0,
+    "recall": 100.0,
+    "f1_score": 100.0,
+    "seq_length": 4,
+    "input_dim": 6,
+    "hidden_dim": 64,
+    "num_layers": 2
+}

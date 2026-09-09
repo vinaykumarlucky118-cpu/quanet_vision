@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics & Statistics — QuaNet Vision{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
+    <div>
+        <span class="badge badge-info" style="margin-bottom: 0.5rem;">Exploratory Data Analysis</span>
+        <h1 style="font-size: 2.2rem;">Water Quality Analytics Studio</h1>
+        <p style="color: var(--text-secondary); max-width: 750px; margin-top: 0.35rem;">
+            Examine parameter statistical profiles, class distributions, temporal parameter trends, and Pearson cross-correlations.
+        </p>
+    </div>
+
+    <!-- Station Filter -->
+    <form method="GET" action="{{ url_for('analytics.index') }}" id="analyticsStationForm">
+        <select name="water_body_id" class="form-select" style="min-width: 220px;" onchange="document.getElementById('analyticsStationForm').submit()">
+            <option value="">All Monitoring Stations</option>
+            {% for wb in water_bodies %}
+                <option value="{{ wb.id }}" {% if selected_wb == wb.id %}selected{% endif %}>{{ wb.name }}</option>
+            {% endfor %}
+        </select>
+    </form>
+</div>
+
+{% if has_data %}
+<!-- 6 Parameter Summary Statistics Cards -->
+<h3 style="font-size: 1.25rem; margin-bottom: 1rem; color: #ffffff;">
+    <i class="fa-solid fa-chart-column" style="color: #38bdf8;"></i> Parameter Statistical Distributions (N = {{ total_samples }})
+</h3>
+
+<div class="grid-6" style="margin-bottom: 2rem;">
+    <!-- 1. pH -->
+    <div class="card" style="padding: 1rem;">
+        <span class="sensor-label" style="color: #38bdf8;">pH Level</span>
+        <div style="font-size: 1.4rem; font-weight: 800; color: #ffffff; margin: 0.25rem 0;">μ: {{ stats.ph.mean }}</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.15rem;">
+            <span>Range: {{ stats.ph.min }} - {{ stats.ph.max }}</span>
+            <span>Std Dev: ±{{ stats.ph.std }}</span>
+        </div>
+    </div>
+
+    <!-- 2. Temperature -->
+    <div class="card" style="padding: 1rem;">
+        <span class="sensor-label" style="color: #f59e0b;">Temperature</span>
+        <div style="font-size: 1.4rem; font-weight: 800; color: #ffffff; margin: 0.25rem 0;">{{ stats.temperature.mean }}°C</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.15rem;">
+            <span>Range: {{ stats.temperature.min }} - {{ stats.temperature.max }}°</span>
+            <span>Std Dev: ±{{ stats.temperature.std }}°</span>
+        </div>
+    </div>
+
+    <!-- 3. Turbidity -->
+    <div class="card" style="padding: 1rem;">
+        <span class="sensor-label" style="color: #ef4444;">Turbidity</span>
+        <div style="font-size: 1.4rem; font-weight: 800; color: #ffffff; margin: 0.25rem 0;">{{ stats.turbidity.mean }} NTU</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.15rem;">
+            <span>Range: {{ stats.turbidity.min }} - {{ stats.turbidity.max }}</span>
+            <span>Std Dev: ±{{ stats.turbidity.std }}</span>
+        </div>
+    </div>
+
+    <!-- 4. DO -->
+    <div class="card" style="padding: 1rem;">
+        <span class="sensor-label" style="color: #10b981;">Dissolved O₂</span>
+        <div style="font-size: 1.4rem; font-weight: 800; color: #ffffff; margin: 0.25rem 0;">{{ stats.dissolved_oxygen.mean }} mg/L</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.15rem;">
+            <span>Range: {{ stats.dissolved_oxygen.min }} - {{ stats.dissolved_oxygen.max }}</span>
+            <span>Std Dev: ±{{ stats.dissolved_oxygen.std }}</span>
+        </div>
+    </div>
+
+    <!-- 5. TDS -->
+    <div class="card" style="padding: 1rem;">
+        <span class="sensor-label" style="color: #818cf8;">TDS</span>
+        <div style="font-size: 1.4rem; font-weight: 800; color: #ffffff; margin: 0.25rem 0;">{{ stats.tds.mean }} mg/L</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.15rem;">
+            <span>Range: {{ stats.tds.min }} - {{ stats.tds.max }}</span>
+            <span>Std Dev: ±{{ stats.tds.std }}</span>
+        </div>
+    </div>
+
+    <!-- 6. Conductivity -->
+    <div class="card" style="padding: 1rem;">
+        <span class="sensor-label" style="color: #06b6d4;">Conductivity</span>
+        <div style="font-size: 1.4rem; font-weight: 800; color: #ffffff; margin: 0.25rem 0;">{{ stats.conductivity.mean }} µS</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.15rem;">
+            <span>Range: {{ stats.conductivity.min }} - {{ stats.conductivity.max }}</span>
+            <span>Std Dev: ±{{ stats.conductivity.std }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Grid: Distribution & Multi-Parameter Trends -->
+<div class="grid-2" style="margin-bottom: 2rem;">
+    <!-- Doughnut Quality Distribution -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title"><i class="fa-solid fa-chart-pie" style="color: #38bdf8;"></i> Water Quality Class Distribution</span>
+        </div>
+        <div style="height: 240px; position: relative;">
+            <canvas id="qualityDoughnutChart"></canvas>
+        </div>
+        <div style="display: flex; justify-content: space-around; margin-top: 1rem; font-size: 0.82rem; text-align: center;">
+            <div>
+                <span class="badge badge-good">GOOD</span>
+                <div style="font-size: 1.1rem; font-weight: 800; color: #ffffff; margin-top: 0.2rem;">{{ quality_dist.GOOD.pct }}%</div>
+                <div style="color: var(--text-muted); font-size: 0.72rem;">{{ quality_dist.GOOD.count }} samples</div>
+            </div>
+            <div>
+                <span class="badge badge-moderate">MODERATE</span>
+                <div style="font-size: 1.1rem; font-weight: 800; color: #ffffff; margin-top: 0.2rem;">{{ quality_dist.MODERATE.pct }}%</div>
+                <div style="color: var(--text-muted); font-size: 0.72rem;">{{ quality_dist.MODERATE.count }} samples</div>
+            </div>
+            <div>
+                <span class="badge badge-poor">POOR</span>
+                <div style="font-size: 1.1rem; font-weight: 800; color: #ffffff; margin-top: 0.2rem;">{{ quality_dist.POOR.pct }}%</div>
+                <div style="color: var(--text-muted); font-size: 0.72rem;">{{ quality_dist.POOR.count }} samples</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timeline Trend Profile -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title"><i class="fa-solid fa-arrow-trend-up" style="color: #34d399;"></i> Multi-Parameter Trajectory Trend</span>
+        </div>
+        <div style="height: 280px;">
+            <canvas id="analyticsTrendChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Pearson Correlation Matrix Heatmap -->
+<div class="card">
+    <div class="card-header">
+        <span class="card-title"><i class="fa-solid fa-network-wired" style="color: #a78bfa;"></i> Pearson Parameter Correlation Matrix (r)</span>
+        <span class="badge badge-info">Normalized [-1.0 to +1.0]</span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="data-table" style="text-align: center;">
+            <thead>
+                <tr>
+                    <th>Parameter</th>
+                    {% for l in corr_labels %}
+                        <th>{{ l }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in corr_matrix %}
+                    {% set r_idx = loop.index0 %}
+                    <tr>
+                        <td style="text-align: left; font-weight: 700; color: #ffffff;">{{ corr_labels[r_idx] }}</td>
+                        {% for val in row %}
+                            <td style="
+                                {% if val >= 0.7 %}background: rgba(14, 165, 233, 0.45); color: #ffffff; font-weight: 800;
+                                {% elif val >= 0.3 %}background: rgba(14, 165, 233, 0.2); color: #38bdf8;
+                                {% elif val <= -0.5 %}background: rgba(239, 68, 68, 0.35); color: #ffffff; font-weight: 800;
+                                {% elif val <= -0.2 %}background: rgba(239, 68, 68, 0.15); color: #f87171;
+                                {% else %}background: rgba(255, 255, 255, 0.02); color: var(--text-secondary);{% endif %}
+                            ">
+                                {{ val }}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.85rem; line-height: 1.5;">
+        <strong>Domain Insight:</strong> Strong positive correlation exists between TDS and Conductivity ($r \approx 0.9+$). Dissolved Oxygen exhibits negative correlation with temperature and high turbidity loads ($r \approx -0.4$ to $-0.6$).
+    </div>
+</div>
+
+{% else %}
+<div class="card" style="text-align: center; padding: 4rem 1.5rem;">
+    <div style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem;"><i class="fa-solid fa-chart-line"></i></div>
+    <h3>No Telemetry Data Available</h3>
+    <p style="color: var(--text-secondary); margin-top: 0.5rem;">No sensor records exist for the selected filter.</p>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const qualityDistData = {{ quality_dist|tojson if has_data else '{}' }};
+    const trendChartData = {{ trend_data|tojson if has_data else '{}' }};
+</script>
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+{% endblock %}

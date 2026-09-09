@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}QuaNet Vision{% endblock %} — Intelligent Water Quality Prediction</title>
+    
+    <!-- Google Fonts & Font Awesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Chart.js 4.x -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+    <!-- Sticky Navigation Bar -->
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('dashboard.home') }}" class="nav-brand">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-water text-white"></i>
+                </div>
+                <span>QuaNet <span style="color: var(--accent-cyan);">Vision</span></span>
+            </a>
+
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <ul class="nav-links">
+                <li><a href="{{ url_for('dashboard.home') }}" class="nav-link {% if request.endpoint == 'dashboard.home' %}active{% endif %}">Home</a></li>
+                <li><a href="{{ url_for('dashboard.about') }}" class="nav-link {% if request.endpoint == 'dashboard.about' %}active{% endif %}">About</a></li>
+                <li><a href="{{ url_for('dashboard.how_it_works') }}" class="nav-link {% if request.endpoint == 'dashboard.how_it_works' %}active{% endif %}">How It Works</a></li>
+                <li><a href="{{ url_for('dashboard.index') }}" class="nav-link {% if request.endpoint == 'dashboard.index' %}active{% endif %}">Dashboard</a></li>
+                <li><a href="{{ url_for('prediction.index') }}" class="nav-link {% if request.endpoint == 'prediction.index' %}active{% endif %}">Prediction</a></li>
+                <li><a href="{{ url_for('satellite.index') }}" class="nav-link {% if request.endpoint == 'satellite.index' %}active{% endif %}">Satellite</a></li>
+                <li><a href="{{ url_for('sensor_data.index') }}" class="nav-link {% if request.endpoint == 'sensor_data.index' %}active{% endif %}">Sensor Data</a></li>
+                <li><a href="{{ url_for('analytics.index') }}" class="nav-link {% if request.endpoint == 'analytics.index' %}active{% endif %}">Analytics</a></li>
+                <li>
+                    <a href="{{ url_for('alerts.index') }}" class="nav-link {% if request.endpoint == 'alerts.index' %}active{% endif %}">
+                        Alerts
+                        {% if active_alert_count > 0 %}
+                            <span class="badge badge-danger" style="font-size: 0.65rem; padding: 0.15rem 0.45rem; margin-left: 0.2rem;">{{ active_alert_count }}</span>
+                        {% endif %}
+                    </a>
+                </li>
+                <li><a href="{{ url_for('reports.index') }}" class="nav-link {% if request.endpoint == 'reports.index' %}active{% endif %}">Reports</a></li>
+                <li><a href="{{ url_for('models_info.index') }}" class="nav-link {% if request.endpoint == 'models_info.index' %}active{% endif %}">Models</a></li>
+                <li><a href="{{ url_for('dashboard.about_team') }}" class="nav-link {% if request.endpoint == 'dashboard.about_team' %}active{% endif %}">Team</a></li>
+                
+                <li>
+                    <a href="{{ url_for('dashboard.index') }}" class="nav-btn">
+                        <i class="fa-solid fa-gauge-high"></i> Launch Dashboard
+                    </a>
+                </li>
+
+                {% if current_user %}
+                    <li>
+                        <a href="{{ url_for('auth.logout') }}" class="nav-link" title="Signed in as {{ current_user.name }}">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                        </a>
+                    </li>
+                {% else %}
+                    <li>
+                        <a href="{{ url_for('auth.login') }}" class="nav-link" title="Demo Sign In">
+                            <i class="fa-regular fa-user"></i>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </header>
+
+    <!-- Main Body Content -->
+    <main class="main-wrapper">
+        <!-- Flash Message Alerts -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-container">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            <div>
+                                {% if category == 'success' %}
+                                    <i class="fa-solid fa-circle-check"></i>
+                                {% elif category == 'danger' %}
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+                                {% elif category == 'warning' %}
+                                    <i class="fa-solid fa-circle-exclamation"></i>
+                                {% else %}
+                                    <i class="fa-solid fa-circle-info"></i>
+                                {% endif %}
+                                <span style="margin-left: 0.5rem;">{{ message }}</span>
+                            </div>
+                            <span style="cursor: pointer;" onclick="this.parentElement.remove()">&times;</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Comprehensive Academic Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div>
+                <div class="nav-brand" style="margin-bottom: 0.75rem;">
+                    <div class="brand-icon">
+                        <i class="fa-solid fa-water text-white"></i>
+                    </div>
+                    <span>QuaNet <span style="color: var(--accent-cyan);">Vision</span></span>
+                </div>
+                <p style="font-size: 0.85rem; color: var(--text-secondary); max-width: 320px; margin-bottom: 1rem;">
+                    A Hybrid IoT–Satellite Deep Learning System for Intelligent Water Quality Prediction and Anomaly Detection.
+                </p>
+                <div class="demo-pill">
+                    <i class="fa-solid fa-graduation-cap"></i> B.Tech CSE (AI & ML) Academic Project
+                </div>
+            </div>
+
+            <div>
+                <h4 style="font-size: 0.95rem; margin-bottom: 0.85rem; color: #ffffff;">Navigation</h4>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.45rem; font-size: 0.85rem;">
+                    <li><a href="{{ url_for('dashboard.home') }}">Home</a></li>
+                    <li><a href="{{ url_for('dashboard.about') }}">About Project</a></li>
+                    <li><a href="{{ url_for('dashboard.how_it_works') }}">How It Works</a></li>
+                    <li><a href="{{ url_for('dashboard.index') }}">Monitoring Dashboard</a></li>
+                    <li><a href="{{ url_for('prediction.index') }}">AI Prediction</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 style="font-size: 0.95rem; margin-bottom: 0.85rem; color: #ffffff;">Research Modules</h4>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.45rem; font-size: 0.85rem;">
+                    <li><a href="{{ url_for('satellite.index') }}">Satellite CNN Analysis</a></li>
+                    <li><a href="{{ url_for('sensor_data.index') }}">IoT Sensor Telemetry</a></li>
+                    <li><a href="{{ url_for('analytics.index') }}">Environmental Analytics</a></li>
+                    <li><a href="{{ url_for('models_info.index') }}">Model Evaluation</a></li>
+                    <li><a href="{{ url_for('reports.index') }}">Assessment Reports</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 style="font-size: 0.95rem; margin-bottom: 0.85rem; color: #ffffff;">Project Credits</h4>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.45rem; font-size: 0.85rem;">
+                    <li><a href="{{ url_for('dashboard.about_team') }}">Team Information</a></li>
+                    <li><a href="{{ url_for('dashboard.contact') }}">Contact / Inquiries</a></li>
+                    <li><a href="{{ url_for('auth.login') }}">Demo Sign-In</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div>
+                &copy; {{ now.year if now else '2026' }} <strong>QuaNet Vision</strong>. Academic Research & Demonstration Prototype.
+            </div>
+            <div style="color: var(--text-muted);">
+                Powered by Flask &bull; PyTorch Deep Learning (CNN + LSTM) &bull; SQLite
+            </div>
+        </div>
+    </footer>
+
+    <!-- Global Scripts -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

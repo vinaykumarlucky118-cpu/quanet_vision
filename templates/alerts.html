@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Environmental Alerts — QuaNet Vision{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
+    <div>
+        <span class="badge badge-danger" style="margin-bottom: 0.5rem;"><i class="fa-solid fa-bell"></i> Live Alert Feed</span>
+        <h1 style="font-size: 2.2rem;">Water Quality Anomaly Alerts</h1>
+        <p style="color: var(--text-secondary); max-width: 700px; margin-top: 0.35rem;">
+            Real-time threshold violation triggers and automated environmental warning logs across all sensor telemetry nodes.
+        </p>
+    </div>
+
+    <!-- Alert Counters -->
+    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+        <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 10px; padding: 0.5rem 1rem; text-align: center;">
+            <div style="font-size: 1.4rem; font-weight: 800; color: #f87171;">{{ crit_count }}</div>
+            <div style="font-size: 0.72rem; color: #fca5a5; text-transform: uppercase;">Critical Active</div>
+        </div>
+
+        <div style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 10px; padding: 0.5rem 1rem; text-align: center;">
+            <div style="font-size: 1.4rem; font-weight: 800; color: #fbbf24;">{{ warn_count }}</div>
+            <div style="font-size: 0.72rem; color: #fde68a; text-transform: uppercase;">Warning Active</div>
+        </div>
+
+        <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 10px; padding: 0.5rem 1rem; text-align: center;">
+            <div style="font-size: 1.4rem; font-weight: 800; color: #34d399;">{{ resolved_count }}</div>
+            <div style="font-size: 0.72rem; color: #a7f3d0; text-transform: uppercase;">Resolved</div>
+        </div>
+    </div>
+</div>
+
+<!-- Severity & Status Filters -->
+<div class="card" style="margin-bottom: 1.5rem; padding: 1.15rem 1.5rem;">
+    <form method="GET" action="{{ url_for('alerts.index') }}" style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end;">
+        <div style="flex: 1; min-width: 150px;">
+            <label class="form-label" style="font-size: 0.8rem;">Filter by Status</label>
+            <select name="status" class="form-select">
+                <option value="ACTIVE" {% if selected_status == 'ACTIVE' %}selected{% endif %}>Active Alerts</option>
+                <option value="RESOLVED" {% if selected_status == 'RESOLVED' %}selected{% endif %}>Resolved Alerts</option>
+                <option value="ALL" {% if selected_status == 'ALL' %}selected{% endif %}>All Records</option>
+            </select>
+        </div>
+
+        <div style="flex: 1; min-width: 150px;">
+            <label class="form-label" style="font-size: 0.8rem;">Severity</label>
+            <select name="severity" class="form-select">
+                <option value="">All Severities</option>
+                <option value="CRITICAL" {% if selected_severity == 'CRITICAL' %}selected{% endif %}>CRITICAL ⚠</option>
+                <option value="WARNING" {% if selected_severity == 'WARNING' %}selected{% endif %}>WARNING !</option>
+            </select>
+        </div>
+
+        <div style="flex: 1.5; min-width: 180px;">
+            <label class="form-label" style="font-size: 0.8rem;">Station</label>
+            <select name="water_body_id" class="form-select">
+                <option value="">All Monitoring Stations</option>
+                {% for wb in water_bodies %}
+                    <option value="{{ wb.id }}" {% if selected_wb == wb.id %}selected{% endif %}>{{ wb.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <button type="submit" class="btn btn-primary" style="padding: 0.65rem 1.25rem;"><i class="fa-solid fa-filter"></i> Filter</button>
+        </div>
+    </form>
+</div>
+
+<!-- Alert Cards Stream -->
+<div style="display: flex; flex-direction: column; gap: 1rem;">
+    {% for a in alerts %}
+        <div class="card" style="border-left: 4px solid {% if a.severity == 'CRITICAL' %}#ef4444{% elif a.severity == 'WARNING' %}#f59e0b{% else %}#0ea5e9{% endif %}; padding: 1.25rem 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 0.75rem;">
+                <div style="display: flex; align-items: center; gap: 0.65rem;">
+                    <span class="badge {% if a.severity == 'CRITICAL' %}badge-danger{% elif a.severity == 'WARNING' %}badge-warning{% else %}badge-info{% endif %}">
+                        {% if a.severity == 'CRITICAL' %}⚠ CRITICAL{% elif a.severity == 'WARNING' %}! WARNING{% else %}ℹ INFO{% endif %}
+                    </span>
+                    <h3 style="font-size: 1.1rem; color: #ffffff;">{{ a.parameter }} Threshold Violation</h3>
+                </div>
+
+                <div style="font-size: 0.82rem; color: var(--text-muted);">
+                    <i class="fa-regular fa-clock"></i> {{ a.timestamp }}
+                </div>
+            </div>
+
+            <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.85rem;">
+                {{ a.message }}
+            </p>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 0.75rem; font-size: 0.82rem;">
+                <div style="color: var(--text-muted);">
+                    <i class="fa-solid fa-location-dot" style="color: var(--accent-cyan);"></i> Station: <strong style="color: #ffffff;">{{ a.water_body_name or 'Station' }}</strong> &bull; Condition: <code>{{ a.threshold_exceeded or 'Limit Breached' }}</code>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem;">
+                    {% if a.status == 'ACTIVE' %}
+                        <form method="POST" action="{{ url_for('alerts.resolve', alert_id=a.id) }}" style="display: inline;">
+                            <button type="submit" class="btn btn-outline btn-sm" style="color: #34d399; border-color: rgba(16, 185, 129, 0.3);">
+                                <i class="fa-solid fa-check"></i> Mark Resolved
+                            </button>
+                        </form>
+                        <form method="POST" action="{{ url_for('alerts.dismiss', alert_id=a.id) }}" style="display: inline;">
+                            <button type="submit" class="btn btn-outline btn-sm" style="color: var(--text-muted);">
+                                <i class="fa-solid fa-xmark"></i> Dismiss
+                            </button>
+                        </form>
+                    {% else %}
+                        <span class="badge badge-good" style="font-size: 0.75rem;">
+                            ✓ {{ a.status }}
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="card" style="text-align: center; padding: 4rem 1.5rem;">
+            <div style="font-size: 3rem; color: #10b981; margin-bottom: 1rem;"><i class="fa-solid fa-circle-check"></i></div>
+            <h3 style="font-size: 1.25rem;">No Active Anomaly Alerts</h3>
+            <p style="color: var(--text-secondary); max-width: 400px; margin: 0.5rem auto 0; font-size: 0.88rem;">
+                All water quality indicators are within acceptable ranges for the selected filter parameters.
+            </p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
